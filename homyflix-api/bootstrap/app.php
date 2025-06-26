@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.jwt' => \App\Interface\Http\Middleware\JwtMiddleware::class
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'api/*'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

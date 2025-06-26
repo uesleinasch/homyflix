@@ -8,7 +8,7 @@ use App\Domain\Movie\Exceptions\MovieNotFoundException;
 use App\Domain\Movie\Exceptions\MovieUpdateException;
 use App\Models\Movie;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -19,11 +19,11 @@ class MovieService
     }
 
     /**
-     * @return Collection|Movie[]
+     * @return LengthAwarePaginator|Movie[]
      */
-    public function getAllMovies(): Collection
+    public function getAllMovies(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->movieRepository->findAll();
+        return $this->movieRepository->findAll($perPage);
     }
 
     /**
