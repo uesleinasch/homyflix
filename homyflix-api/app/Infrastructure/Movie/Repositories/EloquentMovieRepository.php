@@ -4,16 +4,16 @@ namespace App\Infrastructure\Movie\Repositories;
 
 use App\Domain\Movie\Contracts\MovieRepositoryInterface;
 use App\Models\Movie;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EloquentMovieRepository implements MovieRepositoryInterface
 {
     /**
-     * @return Collection|Movie[]
+     * @return LengthAwarePaginator|Movie[]
      */
-    public function findAll(): Collection
+    public function findAll(int $perPage = 15): LengthAwarePaginator
     {
-        return Movie::all();
+        return Movie::paginate($perPage);
     }
 
     public function findById(int $id): ?Movie

@@ -8,6 +8,7 @@ use App\Interface\Http\Requests\StoreMovieRequest;
 use App\Interface\Http\Requests\UpdateMovieRequest;
 use App\Interface\Http\Resources\MovieResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MovieController extends Controller
@@ -16,9 +17,10 @@ class MovieController extends Controller
     {
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $movies = $this->movieService->getAllMovies();
+        $perPage = $request->query('per_page', 15);
+        $movies = $this->movieService->getAllMovies($perPage);
         return MovieResource::collection($movies);
     }
 
