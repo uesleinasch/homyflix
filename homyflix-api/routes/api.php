@@ -14,4 +14,6 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
-Route::apiResource('movies', MovieController::class);
+Route::middleware('auth.jwt')->group(function () {
+    Route::apiResource('movies', MovieController::class);
+});
