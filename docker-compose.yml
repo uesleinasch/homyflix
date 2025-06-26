@@ -49,6 +49,8 @@ services:
       context: ./homyflix-web
       dockerfile: Dockerfile
     container_name: homyflix-web
+    env_file:
+      - ./homyflix-web/.env
     ports:
       - "5173:5173"
     volumes:
