@@ -4,6 +4,7 @@ namespace App\Interface\Http\Controllers\Api;
 
 use App\Application\Auth\DTOs\AuthCredentialsDTO;
 use App\Application\Auth\UseCases\LoginUserUseCase;
+use App\Application\Auth\UseCases\LogoutUserUseCase;
 use App\Application\User\DTOs\CreateUserDTO;
 use App\Application\User\UseCases\RegisterUserUseCase;
 use App\Interface\Http\Requests\LoginRequest;
@@ -16,7 +17,8 @@ class AuthController extends Controller
 {
     public function __construct(
         private readonly LoginUserUseCase $loginUserUseCase,
-        private readonly RegisterUserUseCase $registerUserUseCase
+        private readonly RegisterUserUseCase $registerUserUseCase,
+        private readonly LogoutUserUseCase $logoutUserUseCase
     ) {
     }
 
@@ -40,5 +42,12 @@ class AuthController extends Controller
         $user = $this->registerUserUseCase->execute($userDTO);
 
         return response()->json($user, 201);
+    }
+
+    public function logout(): JsonResponse
+    {
+        $this->logoutUserUseCase->execute();
+
+        return response()->json(['message' => 'Successfully logged out']);
     }
 }

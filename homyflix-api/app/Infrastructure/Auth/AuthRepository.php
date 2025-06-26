@@ -11,4 +11,9 @@ class AuthRepository implements AuthRepositoryInterface
     {
         return JWTAuth::attempt($credentials);
     }
+
+    public function logout(): void
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+    }
 }
