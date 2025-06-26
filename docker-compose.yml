@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: homyflix-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: homyflix
+      POSTGRES_USER: homyflix
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - homyflix-db:/var/lib/postgresql/data
+    networks:
+      - homyflix-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homyflix -d homyflix"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  homyflix-api:
+    build:
+      context: ./homyflix-api
+      dockerfile: Dockerfile
+    container_name: homyflix-api
+    command: sh -c "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=homyflix
+      - DB_USERNAME=homyflix
+      - DB_PASSWORD=password
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./homyflix-api:/var/www/html
+    networks:
+      - homyflix-network
+
+  homyflix-web:
+    build:
+      context: ./homyflix-web
+      dockerfile: Dockerfile
+    container_name: homyflix-web
+    env_file:
+      - ./homyflix-web/.env
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./homyflix-web:/app
+      - /app/node_modules
+    depends_on:
+      - homyflix-api
+    networks:
+      - homyflix-network
+
+volumes:
+  homyflix-db:
+    driver: local
+
+networks:
+  homyflix-network:
+    driver: bridge
