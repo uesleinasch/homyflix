@@ -1,10 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [apiResponse, setApiResponse] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/user') // A porta 8000 é a porta exposta do backend no docker-compose
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => setApiResponse(JSON.stringify(data, null, 2)))
+      .catch(error => setApiResponse(`Error fetching data: ${error.message}`));
+  }, []);
 
   return (
     <>
@@ -24,6 +37,10 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
+      </div>
+      <div className="card">
+        <h2>API Connection Test:</h2>
+        <pre>{apiResponse}</pre>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more

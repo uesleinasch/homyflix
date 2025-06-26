@@ -44,6 +44,21 @@ services:
     networks:
       - homyflix-network
 
+  homyflix-web:
+    build:
+      context: ./homyflix-web
+      dockerfile: Dockerfile
+    container_name: homyflix-web
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./homyflix-web:/app
+      - /app/node_modules
+    depends_on:
+      - homyflix-api
+    networks:
+      - homyflix-network
+
 volumes:
   homyflix-db:
     driver: local
