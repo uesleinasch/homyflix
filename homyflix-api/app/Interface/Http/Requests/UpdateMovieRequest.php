@@ -8,7 +8,7 @@ class UpdateMovieRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // A lógica de autorização será tratada no controller ou em um policy
+        return true; 
     }
 
     public function rules(): array
