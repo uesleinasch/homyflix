@@ -6,4 +6,5 @@ interface AuthRepositoryInterface
 {
     public function attempt(array $credentials): string|false;
     public function logout(): void;
+    public function refresh(): string;
 }

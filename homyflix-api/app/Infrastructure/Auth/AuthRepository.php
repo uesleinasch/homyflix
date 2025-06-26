@@ -16,4 +16,9 @@ class AuthRepository implements AuthRepositoryInterface
     {
         JWTAuth::invalidate(JWTAuth::getToken());
     }
+
+    public function refresh(): string
+    {
+        return JWTAuth::refresh(JWTAuth::getToken());
+    }
 }
