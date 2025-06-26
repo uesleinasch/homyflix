@@ -4,15 +4,20 @@ namespace App\Interface\Http\Controllers\Api;
 
 use App\Application\Auth\DTOs\AuthCredentialsDTO;
 use App\Application\Auth\UseCases\LoginUserUseCase;
+use App\Application\User\DTOs\CreateUserDTO;
+use App\Application\User\UseCases\RegisterUserUseCase;
 use App\Interface\Http\Requests\LoginRequest;
+use App\Interface\Http\Requests\RegisterRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    public function __construct(private readonly LoginUserUseCase $loginUserUseCase)
-    {
+    public function __construct(
+        private readonly LoginUserUseCase $loginUserUseCase,
+        private readonly RegisterUserUseCase $registerUserUseCase
+    ) {
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -26,5 +31,14 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60,
         ]);
+    }
+
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        $userDTO = CreateUserDTO::fromRequest($request->validated());
+
+        $user = $this->registerUserUseCase->execute($userDTO);
+
+        return response()->json($user, 201);
     }
 }
