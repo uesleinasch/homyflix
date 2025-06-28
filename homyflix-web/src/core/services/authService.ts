@@ -1,5 +1,5 @@
-import type { AuthResponse, LoginCredentials, RegisterData } from '../types/auth';
-import api from './api';
+import type { LoginCredentials, AuthResponse, RegisterData } from "../../types/auth";
+import api from "../auth/api";
 
 const setSession = (accessToken: string | null, refreshToken?: string | null) => {
   if (accessToken && refreshToken) {

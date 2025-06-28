@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import api from '../../services/api';
+import api from '../../core/auth/api';
 import type { Movie, MovieState } from '../../types/movie';
 
 const initialState: MovieState = {
