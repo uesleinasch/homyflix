@@ -10,6 +10,7 @@ use App\Application\User\DTOs\CreateUserDTO;
 use App\Application\User\UseCases\RegisterUserUseCase;
 use App\Interface\Http\Requests\LoginRequest;
 use App\Interface\Http\Requests\RegisterRequest;
+use App\Interface\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -43,7 +44,7 @@ class AuthController extends Controller
 
         $user = $this->registerUserUseCase->execute($userDTO);
 
-        return response()->json($user, 201);
+        return (new UserResource($user))->response()->setStatusCode(201);
     }
 
     public function logout(): JsonResponse
