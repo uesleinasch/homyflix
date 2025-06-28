@@ -5,7 +5,7 @@ import LoginPage from './pages/login-page/LoginPage';
 import RegisterPage from './pages/register-page/RegisterPage';
 import DashboardPage from './pages/dashboard-page/DashboardPage';
 import NotFoundPage from './pages/notfound-page/NotFoundPage';
-import PrivateRoute from './components/auth/PrivateRoute';
+import PrivateRoute from './shared/components/auth/PrivateRoute';
 import './App.css'
 
 function App() {
