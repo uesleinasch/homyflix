@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch } from '../store/store';
+import { useNavigate } from 'react-router-dom';
+import type { AppDispatch, RootState } from '../store/store';
 import {
   fetchMovies,
   fetchMovieById,
@@ -13,25 +14,72 @@ import {
   selectMoviesError,
   selectMovieById,
 } from '../store/slices/movieSlice';
-import type { MovieCreateData, MovieUpdateData } from '../types/movie';
+import { clearAuthState } from '../store/slices/authSlice';
+import type { Movie, MovieCreateData, MovieUpdateData } from '../types/movie';
 
 export const useMovieOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const movies = useSelector(selectMovies);
-  const isLoading = useSelector(selectMoviesLoading);
-  const error = useSelector(selectMoviesError);
+  const navigate = useNavigate();
+  
+  const movies = useSelector((state: RootState) => selectMovies(state));
+  const isLoading = useSelector((state: RootState) => selectMoviesLoading(state));
+  const error = useSelector((state: RootState) => selectMoviesError(state));
   
   const [operationLoading, setOperationLoading] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Função para tratar erros de autenticação
+  const handleAuthError = useCallback((errorMessage: string) => {
+    if (errorMessage.includes('Sessão expirada') || errorMessage.includes('Token') || errorMessage.includes('401')) {
+      console.log('Erro de autenticação detectado, fazendo logout...');
+      dispatch(clearAuthState());
+      navigate('/login', { replace: true });
+      return true;
+    }
+    return false;
+  }, [dispatch, navigate]);
+
+  // Wrapper para operações que podem ter erro de auth
+  const withAuthErrorHandling = useCallback(async <T>(
+    operation: () => Promise<T>
+  ): Promise<{ success: boolean; data?: T; error?: string }> => {
+    try {
+      setOperationLoading(true);
+      const result = await operation();
+      return { success: true, data: result };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro inesperado';
+      
+      // Trata erro de autenticação
+      if (handleAuthError(errorMessage)) {
+        return { success: false, error: 'Sessão expirada' };
+      }
+      
+      return { success: false, error: errorMessage };
+    } finally {
+      setOperationLoading(false);
+    }
+  }, [handleAuthError]);
 
   // Buscar todos os filmes
   const loadMovies = useCallback(async () => {
     try {
-      await dispatch(fetchMovies()).unwrap();
-      return { success: true };
+      setOperationLoading(true);
+      const result = await dispatch(fetchMovies()).unwrap();
+      return { success: true, data: result };
     } catch (error) {
-      return { success: false, error: error as string };
+      const errorMessage = error instanceof Error ? error.message : 'Erro inesperado';
+      
+      // Trata erro de autenticação
+      if (handleAuthError(errorMessage)) {
+        return { success: false, error: 'Sessão expirada' };
+      }
+      
+      return { success: false, error: errorMessage };
+    } finally {
+      setOperationLoading(false);
     }
-  }, [dispatch]);
+  }, [dispatch, handleAuthError]);
 
   // Buscar filme por ID
   const loadMovieById = useCallback(async (id: number) => {
@@ -44,48 +92,42 @@ export const useMovieOperations = () => {
   }, [dispatch]);
 
   // Criar novo filme
-  const handleCreateMovie = useCallback(async (movieData: MovieCreateData) => {
-    setOperationLoading(true);
-    try {
-      const newMovie = await dispatch(createMovie(movieData)).unwrap();
-      return { success: true, data: newMovie };
-    } catch (error) {
-      return { success: false, error: error as string };
-    } finally {
-      setOperationLoading(false);
-    }
-  }, [dispatch]);
+  const createNewMovie = useCallback(async (movieData: MovieCreateData) => {
+    return withAuthErrorHandling(async () => {
+      const result = await dispatch(createMovie(movieData)).unwrap();
+      return result;
+    });
+  }, [dispatch, withAuthErrorHandling]);
 
   // Atualizar filme
-  const handleUpdateMovie = useCallback(async (id: number, movieData: MovieUpdateData) => {
-    setOperationLoading(true);
-    try {
-      const updatedMovie = await dispatch(updateMovie({ id, movieData })).unwrap();
-      return { success: true, data: updatedMovie };
-    } catch (error) {
-      return { success: false, error: error as string };
-    } finally {
-      setOperationLoading(false);
-    }
-  }, [dispatch]);
+  const updateExistingMovie = useCallback(async (id: number, movieData: MovieUpdateData) => {
+    return withAuthErrorHandling(async () => {
+      const result = await dispatch(updateMovie({ id, movieData })).unwrap();
+      return result;
+    });
+  }, [dispatch, withAuthErrorHandling]);
 
   // Deletar filme
-  const handleDeleteMovie = useCallback(async (id: number) => {
-    setOperationLoading(true);
-    try {
+  const deleteExistingMovie = useCallback(async (id: number) => {
+    return withAuthErrorHandling(async () => {
       await dispatch(deleteMovie(id)).unwrap();
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error as string };
-    } finally {
-      setOperationLoading(false);
-    }
-  }, [dispatch]);
+      return id;
+    });
+  }, [dispatch, withAuthErrorHandling]);
 
   // Limpar erro
-  const handleClearError = useCallback(() => {
+  const clearMovieError = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
+
+  // Auto-load movies na inicialização - executa apenas uma vez
+  useEffect(() => {
+    if (!hasInitialized && movies.length === 0 && !isLoading) {
+      console.log('Carregando filmes inicialmente...');
+      setHasInitialized(true);
+      dispatch(fetchMovies());
+    }
+  }, [hasInitialized, movies.length, isLoading, dispatch]);
 
   // Selector para buscar filme por ID
   const getMovieById = useCallback((id: number) => {
@@ -101,12 +143,15 @@ export const useMovieOperations = () => {
     // Operações
     loadMovies,
     loadMovieById,
-    createMovie: handleCreateMovie,
-    updateMovie: handleUpdateMovie,
-    deleteMovie: handleDeleteMovie,
-    clearError: handleClearError,
+    createNewMovie,
+    updateExistingMovie,
+    deleteExistingMovie,
+    clearMovieError,
     
     // Selectors
     getMovieById,
+    
+    // Utilidades
+    refreshMovies: loadMovies
   };
 }; 

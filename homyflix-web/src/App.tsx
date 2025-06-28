@@ -7,6 +7,8 @@ import DashboardPage from './pages/dashboardPage/DashboardPage';
 import NotFoundPage from './pages/notfoundPage/NotFoundPage';
 import PrivateRoute from './shared/components/auth/PrivateRoute';
 import PublicRoute from './shared/components/auth/PublicRoute';
+import ListMovies from './pages/movies/listMovies/listMovies';
+import CreateMovie from './pages/movies/createMovie/CreateMovie';
 import './App.css'
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
 
         <Route path="/" element={<PrivateRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/movies" element={<ListMovies />} />
+          <Route path="/movies/create" element={<CreateMovie />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

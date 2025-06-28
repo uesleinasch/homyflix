@@ -69,6 +69,28 @@ export class TokenManager {
     }
   }
 
+  getUserFromToken(): User | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // O JWT do Laravel geralmente inclui o ID do usuário no 'sub'
+      // Como não temos todos os dados, retornamos um objeto parcial
+      if (payload.sub) {
+        return {
+          id: payload.sub,
+          name: payload.name || 'Usuário',
+          email: payload.email || ''
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao extrair usuário do token:', error);
+      return null;
+    }
+  }
+
   setCurrentUser(user: User): void {
     try {
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));

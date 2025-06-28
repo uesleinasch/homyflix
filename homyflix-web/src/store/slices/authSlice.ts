@@ -5,7 +5,7 @@ import { tokenManager } from '../../core/auth/tokenManager';
 import type { AuthState, LoginCredentials, RegisterData, AuthResponse } from '../../types/auth';
 
 const initialState: AuthState = {
-  user: null,
+  user: tokenManager.getCurrentUser(),
   token: tokenManager.getToken(),
   isAuthenticated: tokenManager.isTokenValid(),
   isLoading: false,
@@ -62,7 +62,9 @@ const authSlice = createSlice({
   reducers: {
     syncAuthState: (state) => {
       const token = tokenManager.getToken();
+      const user = tokenManager.getCurrentUser();
       state.token = token;
+      state.user = user;
       state.isAuthenticated = tokenManager.isTokenValid();
     },
     clearAuthState: (state) => {
@@ -111,6 +113,9 @@ const authSlice = createSlice({
       .addCase(refreshToken.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
         state.isAuthenticated = true;
         state.token = action.payload.access_token;
+        if (action.payload.user) {
+          state.user = action.payload.user;
+        }
       })
       .addCase(refreshToken.rejected, (state) => {
         state.isAuthenticated = false;

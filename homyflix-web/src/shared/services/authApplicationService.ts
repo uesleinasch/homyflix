@@ -18,6 +18,14 @@ export class AuthApplicationService {
     try {
       const authData = await authService.login(credentials);
       tokenManager.setToken(authData.access_token);
+      
+      // Tenta extrair informações do usuário do token
+      const userFromToken = tokenManager.getUserFromToken();
+      if (userFromToken) {
+        authData.user = userFromToken;
+        tokenManager.setCurrentUser(userFromToken);
+      }
+      
       this.logAuthEvent('login_success', authData.user?.id);
       
       return authData;
@@ -31,13 +39,24 @@ export class AuthApplicationService {
     try {
       this.validateRegistrationData(userData);
       
-      const authData = await authService.register(userData);
+      const registeredUser = await authService.register(userData);
       
-      tokenManager.setToken(authData.access_token);
+      // O register retorna o usuário criado, mas precisamos fazer login para obter o token
+      const loginData = await authService.login({
+        email: userData.email,
+        password: userData.password
+      });
       
-      this.logAuthEvent('register_success', authData.user?.id);
+      tokenManager.setToken(loginData.access_token);
       
-      return authData;
+      // Usa os dados do usuário retornado do register
+      const user = registeredUser as unknown as User;
+      loginData.user = user;
+      tokenManager.setCurrentUser(user);
+      
+      this.logAuthEvent('register_success', loginData.user?.id);
+      
+      return loginData;
     } catch (error) {
       this.logAuthEvent('register_failed', null, (error as Error).message);
       throw error;
@@ -65,6 +84,13 @@ export class AuthApplicationService {
       const authData = await authService.refreshToken();
       tokenManager.setToken(authData.access_token);
       
+      // Tenta extrair informações do usuário do novo token
+      const userFromToken = tokenManager.getUserFromToken();
+      if (userFromToken) {
+        authData.user = userFromToken;
+        tokenManager.setCurrentUser(userFromToken);
+      }
+      
       this.logAuthEvent('refresh_success');
       
       return authData;
@@ -78,7 +104,12 @@ export class AuthApplicationService {
 
   async getCurrentUser(): Promise<User> {
     try {
-      return await authService.getCurrentUser();
+      // Como não temos a rota /auth/me, retorna o usuário do localStorage
+      const user = tokenManager.getCurrentUser();
+      if (!user) {
+        throw new Error('Usuário não encontrado');
+      }
+      return user;
     } catch (error) {
       this.logAuthEvent('get_user_failed', null, (error as Error).message);
       throw error;

@@ -28,9 +28,9 @@ export class AuthService {
     }
   }
 
-  async register(userData: RegisterData): Promise<AuthResponse> {
+  async register(userData: RegisterData): Promise<User> {
     try {
-      const response = await api.post<AuthResponse>('/auth/register', userData);
+      const response = await api.post<User>('/auth/register', userData);
       return response.data;
     } catch (error) {
       throw this.handleAuthError(error);
@@ -48,15 +48,6 @@ export class AuthService {
   async refreshToken(): Promise<AuthResponse> {
     try {
       const response = await api.post<AuthResponse>('/auth/refresh');
-      return response.data;
-    } catch (error) {
-      throw this.handleAuthError(error);
-    }
-  }
-
-  async getCurrentUser(): Promise<User> {
-    try {
-      const response = await api.get('/auth/me');
       return response.data;
     } catch (error) {
       throw this.handleAuthError(error);

@@ -131,15 +131,20 @@ export const useAuth = () => {
    */
   useEffect(() => {
     const checkAuthState = async () => {
+      // Sincroniza o estado com localStorage na inicialização
+      dispatch(syncAuthState());
+      
       if (token && !isTokenValid()) {
+        console.log('Token inválido detectado na inicialização');
         await handleTokenRefresh();
       } else if (token && isTokenExpiringSoon()) {
+        console.log('Token próximo da expiração detectado na inicialização');
         await handleTokenRefresh();
       }
     };
 
     checkAuthState();
-  }, []);
+  }, []); // Removemos dependencies para evitar loops
 
   /**
    * Configura verificação periódica do token
