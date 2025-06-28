@@ -26,4 +26,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando para iniciar o servidor de desenvolvimento do Laravel
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD sh -c "php artisan migrate:fresh --seed && php artisan serve --host=0.0.0.0 --port=8000"
