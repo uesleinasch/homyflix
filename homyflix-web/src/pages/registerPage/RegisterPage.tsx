@@ -1,30 +1,73 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useDispatch } from 'react-redux';
+import { RegisterSchema, type RegisterFormData } from '../../core/auth/schemas/authSchemas';
+import { register as registerAction } from '../../store/slices/authSlice';
+import { type AppDispatch } from '../../store/store';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(RegisterSchema),
+  });
+
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      await dispatch(registerAction(data)).unwrap();
+      navigate('/'); 
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro ao registrar.';
+      setError('root', {
+        type: 'manual',
+        message: errorMessage,
+      });
+    }
+  };
+
   return (
     <div>
       <h1>Register Page</h1>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="username" name="username" required />
+          <label htmlFor="name">Name:</label>
+          <input type="text" id="name" {...register('name')} />
+          {errors.name && <p style={{ color: 'red' }}>{errors.name.message}</p>}
         </div>
         <div>
           <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" required />
+          <input type="email" id="email" {...register('email')} />
+          {errors.email && <p style={{ color: 'red' }}>{errors.email.message}</p>}
         </div>
         <div>
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" required />
+          <input type="password" id="password" {...register('password')} />
+          {errors.password && <p style={{ color: 'red' }}>{errors.password.message}</p>}
         </div>
-        <button type="submit">Register</button>
+        <div>
+          <label htmlFor="password_confirmation">Confirm Password:</label>
+          <input type="password" id="password_confirmation" {...register('password_confirmation')} />
+          {errors.password_confirmation && <p style={{ color: 'red' }}>{errors.password_confirmation.message}</p>}
+        </div>
+
+        {errors.root && <p style={{ color: 'red' }}>{errors.root.message}</p>}
+
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Registering...' : 'Register'}
+        </button>
       </form>
       <Link to="/login">
         <button>Ir para login</button>
       </Link>
     </div>
-  )
+  );
 };
 
 export default RegisterPage;

@@ -2,12 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import api from '../../core/auth/api';
-import type { AuthState, User } from '../../types/auth';
+import type { AuthState } from '../../types/auth';
+import type { User } from '../../types/user';
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('token'),
-  isAuthenticated: !!localStorage.getItem('token'),
+  token: localStorage.getItem('authToken'),
+  isAuthenticated: !!localStorage.getItem('authToken'),
   isLoading: false,
   error: null,
 };
@@ -17,7 +18,7 @@ export const login = createAsyncThunk(
   async (credentials: Record<string, string>, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login', credentials);
-      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('authToken', response.data.access_token);
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -31,7 +32,7 @@ export const register = createAsyncThunk(
   async (userData: Record<string, string>, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/register', userData);
-      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('authToken', response.data.access_token);
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -43,7 +44,7 @@ export const register = createAsyncThunk(
 export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
     await api.post('/auth/logout');
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
   } catch (error) {
     const axiosError = error as AxiosError;
     return rejectWithValue(axiosError.response?.data);
@@ -55,10 +56,10 @@ export const refreshToken = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/refresh');
-      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('authToken', response.data.access_token);
       return response.data;
     } catch (error) {
-      localStorage.removeItem('token');
+      localStorage.removeItem('authToken');
       const axiosError = error as AxiosError;
       return rejectWithValue(axiosError.response?.data);
     }
