@@ -14,6 +14,12 @@ const formatMovie = (movie: ApiMovieResponse): Movie => ({
 const handleApiError = (error: unknown): never => {
   if (isAxiosError(error)) {
     console.error("API Error:", error.response?.data);
+    
+    // Se for erro 401, deixa o useAuth hook gerenciar o logout
+    if (error.response?.status === 401) {
+      throw new Error('Sessão expirada. Você será redirecionado para o login.');
+    }
+    
     throw new Error(error.response?.data?.message || 'Erro de comunicação com a API');
   } else if (error instanceof Error) {
     console.error("Application Error:", error.message);

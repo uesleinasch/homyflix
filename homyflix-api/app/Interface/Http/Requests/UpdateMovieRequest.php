@@ -18,7 +18,6 @@ class UpdateMovieRequest extends FormRequest
             'release_year' => 'sometimes|required|integer|min:1888',
             'genre' => 'sometimes|required|string|max:100',
             'synopsis' => 'sometimes|required|string',
-            'duration_in_minutes' => 'sometimes|required|integer|min:1',
             'poster_url' => 'nullable|url',
         ];
     }

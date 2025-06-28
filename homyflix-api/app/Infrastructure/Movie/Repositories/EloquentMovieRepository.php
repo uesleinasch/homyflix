@@ -13,12 +13,30 @@ class EloquentMovieRepository implements MovieRepositoryInterface
      */
     public function findAll(int $perPage = 15): LengthAwarePaginator
     {
-        return Movie::paginate($perPage);
+        return Movie::with(['user'])->paginate($perPage);
+    }
+
+    /**
+     * @return LengthAwarePaginator|Movie[]
+     */
+    public function findAllByUser(int $userId, int $perPage = 15): LengthAwarePaginator
+    {
+        return Movie::with(['user'])
+            ->where('user_id', $userId)
+            ->paginate($perPage);
     }
 
     public function findById(int $id): ?Movie
     {
-        return Movie::find($id);
+        return Movie::with(['user'])->find($id);
+    }
+
+    public function findByIdAndUser(int $id, int $userId): ?Movie
+    {
+        return Movie::with(['user'])
+            ->where('id', $id)
+            ->where('user_id', $userId)
+            ->first();
     }
 
     public function create(array $data): Movie
@@ -31,7 +49,7 @@ class EloquentMovieRepository implements MovieRepositoryInterface
         $movie = $this->findById($id);
         if ($movie) {
             $movie->update($data);
-            return $movie;
+            return $movie->fresh(['user']);
         }
         return null;
     }

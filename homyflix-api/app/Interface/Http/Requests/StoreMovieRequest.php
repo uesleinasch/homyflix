@@ -18,7 +18,6 @@ class StoreMovieRequest extends FormRequest
             'release_year' => 'required|integer|min:1888',
             'genre' => 'required|string|max:100',
             'synopsis' => 'required|string',
-            'duration_in_minutes' => 'required|integer|min:1',
             'poster_url' => 'nullable|url',
         ];
     }
