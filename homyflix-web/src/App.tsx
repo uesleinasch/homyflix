@@ -1,10 +1,10 @@
 import '@mantine/core/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/login-page/LoginPage';
-import RegisterPage from './pages/register-page/RegisterPage';
-import DashboardPage from './pages/dashboard-page/DashboardPage';
-import NotFoundPage from './pages/notfound-page/NotFoundPage';
+import LoginPage from './pages/loginPage/LoginPage';
+import RegisterPage from './pages/registerPage/RegisterPage';
+import DashboardPage from './pages/dashboardPage/DashboardPage';
+import NotFoundPage from './pages/notfoundPage/NotFoundPage';
 import PrivateRoute from './shared/components/auth/PrivateRoute';
 import './App.css'
 
