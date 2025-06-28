@@ -1,5 +1,7 @@
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/LoginPage';
 import RegisterPage from './pages/registerPage/RegisterPage';
@@ -16,6 +18,7 @@ function App() {
 
   return (
     <MantineProvider >
+      <Notifications />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         
