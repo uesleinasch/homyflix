@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -5,11 +6,14 @@ import { useDispatch } from 'react-redux';
 import { LoginSchema, type LoginFormData } from '../../core/auth/schemas/authSchemas';
 import { login } from '../../store/slices/authSlice';
 import type { AppDispatch } from '../../store/store';
+import { useAuth } from '../../shared/hooks/useAuth';
 
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated } = useAuth();
+  
   const {
     register,
     handleSubmit,
@@ -19,10 +23,16 @@ const LoginPage = () => {
     resolver: zodResolver(LoginSchema),
   });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   const onSubmit = async (data: LoginFormData) => {
     try {
       await dispatch(login(data)).unwrap();
-      navigate('/'); 
+      navigate('/dashboard', { replace: true }); 
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro ao fazer login.';
       setError('root', {

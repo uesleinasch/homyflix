@@ -69,7 +69,20 @@ export const refreshToken = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    syncAuthState: (state) => {
+      const token = localStorage.getItem('authToken');
+      state.token = token;
+      state.isAuthenticated = !!token;
+    },
+    clearAuthState: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      state.error = null;
+      localStorage.removeItem('authToken');
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -117,4 +130,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { syncAuthState, clearAuthState } = authSlice.actions;
 export default authSlice.reducer;
