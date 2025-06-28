@@ -1,53 +1,46 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { AxiosError } from 'axios';
-import api from '../../core/auth/api';
-import type { AuthState } from '../../types/auth';
-import type { User } from '../../types/user';
+import { authApplicationService } from '../../shared/services/authApplicationService';
+import { tokenManager } from '../../core/auth/tokenManager';
+import type { AuthState, LoginCredentials, RegisterData, AuthResponse } from '../../types/auth';
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('authToken'),
-  isAuthenticated: !!localStorage.getItem('authToken'),
+  token: tokenManager.getToken(),
+  isAuthenticated: tokenManager.isTokenValid(),
   isLoading: false,
   error: null,
 };
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (credentials: Record<string, string>, { rejectWithValue }) => {
+  async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/login', credentials);
-      localStorage.setItem('authToken', response.data.access_token);
-      return response.data;
+      const response = await authApplicationService.authenticateUser(credentials);
+      return response;
     } catch (error) {
-      const axiosError = error as AxiosError;
-      return rejectWithValue(axiosError.response?.data);
+      return rejectWithValue((error as Error).message);
     }
   }
 );
 
 export const register = createAsyncThunk(
   'auth/register',
-  async (userData: Record<string, string>, { rejectWithValue }) => {
+  async (userData: RegisterData, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/register', userData);
-      localStorage.setItem('authToken', response.data.access_token);
-      return response.data;
+      const response = await authApplicationService.registerUser(userData);
+      return response;
     } catch (error) {
-      const axiosError = error as AxiosError;
-      return rejectWithValue(axiosError.response?.data);
+      return rejectWithValue((error as Error).message);
     }
   }
 );
 
 export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
-    await api.post('/auth/logout');
-    localStorage.removeItem('authToken');
+    await authApplicationService.logoutUser();
   } catch (error) {
-    const axiosError = error as AxiosError;
-    return rejectWithValue(axiosError.response?.data);
+    return rejectWithValue((error as Error).message);
   }
 });
 
@@ -55,13 +48,10 @@ export const refreshToken = createAsyncThunk(
   'auth/refresh',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/refresh');
-      localStorage.setItem('authToken', response.data.access_token);
-      return response.data;
+      const response = await authApplicationService.refreshUserToken();
+      return response;
     } catch (error) {
-      localStorage.removeItem('authToken');
-      const axiosError = error as AxiosError;
-      return rejectWithValue(axiosError.response?.data);
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -71,16 +61,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     syncAuthState: (state) => {
-      const token = localStorage.getItem('authToken');
+      const token = tokenManager.getToken();
       state.token = token;
-      state.isAuthenticated = !!token;
+      state.isAuthenticated = tokenManager.isTokenValid();
     },
     clearAuthState: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
-      localStorage.removeItem('authToken');
+      tokenManager.clearToken();
     },
   },
   extraReducers: (builder) => {
@@ -89,7 +79,7 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<{ access_token: string; user: User }>) => {
+      .addCase(login.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
         state.isLoading = false;
         state.isAuthenticated = true;
         state.token = action.payload.access_token;
@@ -103,7 +93,7 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(register.fulfilled, (state, action: PayloadAction<{ access_token: string; user: User }>) => {
+      .addCase(register.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
         state.isLoading = false;
         state.isAuthenticated = true;
         state.token = action.payload.access_token;
@@ -118,7 +108,7 @@ const authSlice = createSlice({
         state.token = null;
         state.user = null;
       })
-      .addCase(refreshToken.fulfilled, (state, action: PayloadAction<{ access_token: string }>) => {
+      .addCase(refreshToken.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
         state.isAuthenticated = true;
         state.token = action.payload.access_token;
       })
