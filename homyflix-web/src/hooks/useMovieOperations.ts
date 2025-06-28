@@ -15,7 +15,7 @@ import {
   selectMovieById,
 } from '../store/slices/movieSlice';
 import { clearAuthState } from '../store/slices/authSlice';
-import type { Movie, MovieCreateData, MovieUpdateData } from '../types/movie';
+import type {  MovieCreateData, MovieUpdateData } from '../types/movie';
 
 export const useMovieOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -83,13 +83,11 @@ export const useMovieOperations = () => {
 
   // Buscar filme por ID
   const loadMovieById = useCallback(async (id: number) => {
-    try {
-      const movie = await dispatch(fetchMovieById(id)).unwrap();
-      return { success: true, data: movie };
-    } catch (error) {
-      return { success: false, error: error as string };
-    }
-  }, [dispatch]);
+    return withAuthErrorHandling(async () => {
+      const result = await dispatch(fetchMovieById(id)).unwrap();
+      return result;
+    });
+  }, [dispatch, withAuthErrorHandling]);
 
   // Criar novo filme
   const createNewMovie = useCallback(async (movieData: MovieCreateData) => {

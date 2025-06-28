@@ -9,6 +9,7 @@ import PrivateRoute from './shared/components/auth/PrivateRoute';
 import PublicRoute from './shared/components/auth/PublicRoute';
 import ListMovies from './pages/movies/listMovies/listMovies';
 import CreateMovie from './pages/movies/createMovie/CreateMovie';
+import MovieDetail from './pages/movies/MovieDetail/MovieDetail';
 import './App.css'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/movies" element={<ListMovies />} />
           <Route path="/movies/create" element={<CreateMovie />} />
+          <Route path="/movies/:id" element={<MovieDetail />} />
           <Route path="/movies/:id/edit" element={<CreateMovie />} />
         </Route>
 
