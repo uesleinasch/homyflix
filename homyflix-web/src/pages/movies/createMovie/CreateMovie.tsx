@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMovieOperations } from '../../../hooks/useMovieOperations';
 
 // Schema de validação baseado nas regras da API
@@ -29,13 +29,21 @@ type CreateMovieFormData = z.infer<typeof createMovieSchema>;
 
 const CreateMovie: React.FC = () => {
   const navigate = useNavigate();
-  const { createMovie, loading } = useMovieOperations();
+  const { id } = useParams<{ id: string }>();
+  const { createNewMovie, updateExistingMovie, loadMovieById, loading } = useMovieOperations();
+  
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoadingMovie, setIsLoadingMovie] = useState(false);
+  const [movieLoadError, setMovieLoadError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setError
+    setError,
+    reset,
+    setValue
   } = useForm<CreateMovieFormData>({
     resolver: zodResolver(createMovieSchema),
     defaultValues: {
@@ -47,9 +55,55 @@ const CreateMovie: React.FC = () => {
     }
   });
 
-  const onSubmit = useCallback(async (data: CreateMovieFormData) => {
+  // Determinar se é modo de edição e carregar dados do filme
+  useEffect(() => {
+    const movieId = id ? parseInt(id) : null;
+    
+    if (movieId && !isNaN(movieId)) {
+      setIsEditMode(true);
+      loadMovieData(movieId);
+    } else {
+      setIsEditMode(false);
+      // Resetar formulário para modo de criação
+      reset({
+        title: '',
+        release_year: new Date().getFullYear(),
+        genre: '',
+        synopsis: '',
+        poster_url: ''
+      });
+    }
+  }, [id, reset, loadMovieById, setValue]);
+
+  const loadMovieData = async (movieId: number) => {
+    setIsLoadingMovie(true);
+    setMovieLoadError(null);
+    
     try {
-      // Transformar string vazia em undefined para poster_url
+      const result = await loadMovieById(movieId);
+      if (result.success && result.data) {
+        const movie = result.data;
+        // Preencher formulário com dados do filme
+        setValue('title', movie.title);
+        setValue('release_year', movie.release_year);
+        setValue('genre', movie.genre);
+        setValue('synopsis', movie.synopsis);
+        setValue('poster_url', movie.poster_url || '');
+      } else {
+        setMovieLoadError(result.error || 'Erro ao carregar filme');
+      }
+    } catch {
+      setMovieLoadError('Erro inesperado ao carregar filme');
+    } finally {
+      setIsLoadingMovie(false);
+    }
+  };
+
+  const onSubmit = useCallback(async (data: CreateMovieFormData) => {
+    setSuccessMessage(null);
+    
+    try {
+      // Transformar string vazia em null para poster_url
       const movieData = {
         title: data.title,
         release_year: data.release_year,
@@ -58,91 +112,159 @@ const CreateMovie: React.FC = () => {
         poster_url: data.poster_url || null
       };
 
-      const result = await createMovie(movieData);
-      
-      if (result.success && result.data) {
-        navigate(`/movies/${result.data.id}`);
-      } else if (result.error) {
-        // Mostrar erro genérico
-        setError('root', {
-          type: 'manual',
-          message: result.error
-        });
+      if (isEditMode && id) {
+        const movieId = parseInt(id);
+        const result = await updateExistingMovie(movieId, movieData);
+        
+        if (result.success) {
+          setSuccessMessage('Filme atualizado com sucesso!');
+          // Aguardar um momento para mostrar a mensagem antes de navegar
+          setTimeout(() => {
+            navigate('/movies');
+          }, 2000);
+        } else if (result.error) {
+          // Mostrar erro específico
+          setError('root', {
+            type: 'manual',
+            message: result.error
+          });
+        }
+      } else {
+        const result = await createNewMovie(movieData);
+        
+        if (result.success && result.data) {
+          setSuccessMessage('Filme criado com sucesso!');
+          // Aguardar um momento para mostrar a mensagem antes de navegar
+          setTimeout(() => {
+            navigate(`/movies/${result.data?.id}`);
+          }, 2000);
+        } else if (result.error) {
+          // Mostrar erro específico
+          setError('root', {
+            type: 'manual',
+            message: result.error
+          });
+        }
       }
     } catch {
       setError('root', {
         type: 'manual',
-        message: 'Erro ao criar filme. Tente novamente.'
+        message: `Erro ao ${isEditMode ? 'atualizar' : 'criar'} filme. Tente novamente.`
       });
     }
-  }, [createMovie, navigate, setError]);
+  }, [createNewMovie, updateExistingMovie, navigate, setError, isEditMode, id]);
 
   const handleCancel = useCallback(() => {
     navigate('/movies');
   }, [navigate]);
 
+  // Loading state para carregamento do filme
+  if (isEditMode && isLoadingMovie) {
+    return (
+      <div>
+        <h1>Carregando filme...</h1>
+        <p>Por favor, aguarde enquanto carregamos os dados do filme.</p>
+      </div>
+    );
+  }
+
+  // Error state para carregamento do filme
+  if (isEditMode && movieLoadError) {
+    return (
+      <div>
+        <h1>Erro ao carregar filme</h1>
+        <p style={{ color: 'red' }}>{movieLoadError}</p>
+        <button onClick={() => navigate('/movies')}>
+          Voltar para lista de filmes
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <h1>Criar Novo Filme</h1>
+      <h1>{isEditMode ? 'Editar Filme' : 'Criar Novo Filme'}</h1>
+
+      {/* Mensagem de sucesso */}
+      {successMessage && (
+        <div style={{ backgroundColor: '#d4edda', color: '#155724', padding: '12px', marginBottom: '16px', border: '1px solid #c3e6cb' }}>
+          {successMessage}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Erro geral */}
         {errors.root && (
-          <div>
+          <div style={{ backgroundColor: '#f8d7da', color: '#721c24', padding: '12px', marginBottom: '16px', border: '1px solid #f5c6cb' }}>
             <p>{errors.root.message}</p>
           </div>
         )}
 
         {/* Título */}
-        <div>
+        <div style={{ marginBottom: '16px' }}>
           <label htmlFor="title">Título *</label>
           <input
             id="title"
             type="text"
             {...register('title')}
             disabled={loading}
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
           />
-          {errors.title && <span>{errors.title.message}</span>}
+          {errors.title && <span style={{ color: 'red' }}>{errors.title.message}</span>}
         </div>
 
         {/* Ano de Lançamento */}
-        <div>
+        <div style={{ marginBottom: '16px' }}>
           <label htmlFor="release_year">Ano de Lançamento *</label>
           <input
             id="release_year"
             type="number"
             {...register('release_year', { valueAsNumber: true })}
             disabled={loading}
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
           />
-          {errors.release_year && <span>{errors.release_year.message}</span>}
+          {errors.release_year && <span style={{ color: 'red' }}>{errors.release_year.message}</span>}
         </div>
 
         {/* Gênero */}
-        <div>
+        <div style={{ marginBottom: '16px' }}>
           <label htmlFor="genre">Gênero *</label>
-          <input
+          <select
             id="genre"
-            type="text"
             {...register('genre')}
             disabled={loading}
-          />
-          {errors.genre && <span>{errors.genre.message}</span>}
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+          >
+            <option value="">Selecione um gênero</option>
+            <option value="Action">Ação</option>
+            <option value="Adventure">Aventura</option>
+            <option value="Comedy">Comédia</option>
+            <option value="Drama">Drama</option>
+            <option value="Horror">Terror</option>
+            <option value="Romance">Romance</option>
+            <option value="Sci-Fi">Ficção Científica</option>
+            <option value="Thriller">Suspense</option>
+            <option value="Animation">Animação</option>
+            <option value="Documentary">Documentário</option>
+          </select>
+          {errors.genre && <span style={{ color: 'red' }}>{errors.genre.message}</span>}
         </div>
 
         {/* Sinopse */}
-        <div>
+        <div style={{ marginBottom: '16px' }}>
           <label htmlFor="synopsis">Sinopse *</label>
           <textarea
             id="synopsis"
             {...register('synopsis')}
             disabled={loading}
             rows={5}
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
           />
-          {errors.synopsis && <span>{errors.synopsis.message}</span>}
+          {errors.synopsis && <span style={{ color: 'red' }}>{errors.synopsis.message}</span>}
         </div>
 
         {/* URL do Poster */}
-        <div>
+        <div style={{ marginBottom: '16px' }}>
           <label htmlFor="poster_url">URL do Poster</label>
           <input
             id="poster_url"
@@ -150,23 +272,42 @@ const CreateMovie: React.FC = () => {
             {...register('poster_url')}
             disabled={loading}
             placeholder="https://exemplo.com/poster.jpg"
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
           />
-          {errors.poster_url && <span>{errors.poster_url.message}</span>}
+          {errors.poster_url && <span style={{ color: 'red' }}>{errors.poster_url.message}</span>}
         </div>
 
         {/* Botões de ação */}
-        <div>
+        <div style={{ marginTop: '24px' }}>
           <button
             type="submit"
             disabled={loading}
+            style={{ 
+              padding: '12px 24px', 
+              marginRight: '12px',
+              backgroundColor: loading ? '#ccc' : '#007bff',
+              color: 'white',
+              border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
           >
-            {loading ? 'Criando...' : 'Criar Filme'}
+            {loading 
+              ? (isEditMode ? 'Atualizando...' : 'Criando...') 
+              : (isEditMode ? 'Atualizar Filme' : 'Criar Filme')
+            }
           </button>
           
           <button
             type="button"
             onClick={handleCancel}
             disabled={loading}
+            style={{ 
+              padding: '12px 24px',
+              backgroundColor: '#6c757d',
+              color: 'white',
+              border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
           >
             Cancelar
           </button>

@@ -27,6 +27,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/movies" element={<ListMovies />} />
           <Route path="/movies/create" element={<CreateMovie />} />
+          <Route path="/movies/:id/edit" element={<CreateMovie />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
