@@ -2,7 +2,9 @@
 
 namespace App\Interface\Http\Controllers\Api;
 
-use App\Domain\Movie\Services\MovieService;
+use App\Application\Movie\DTOs\CreateMovieDTO;
+use App\Application\Movie\DTOs\UpdateMovieDTO;
+use App\Application\Movie\Services\MovieApplicationService;
 use App\Http\Controllers\Controller;
 use App\Interface\Http\Requests\StoreMovieRequest;
 use App\Interface\Http\Requests\UpdateMovieRequest;
@@ -13,41 +15,48 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MovieController extends Controller
 {
-    public function __construct(private readonly MovieService $movieService)
+    public function __construct(private readonly MovieApplicationService $movieApplicationService)
     {
     }
 
     public function index(Request $request): AnonymousResourceCollection
     {
         $perPage = $request->query('per_page', 15);
-        $movies = $this->movieService->getAllMovies($perPage);
+        $userId = auth()->id();
+        
+        $movies = $this->movieApplicationService->getUserMovies($userId, $perPage);
         return MovieResource::collection($movies);
     }
 
     public function show(int $id): MovieResource
     {
-        $movie = $this->movieService->getMovieById($id);
+        $userId = auth()->id();
+        $movie = $this->movieApplicationService->getMovieById($id, $userId);
         return new MovieResource($movie);
     }
 
     public function store(StoreMovieRequest $request): MovieResource
     {
-        $movieData = $request->validated();
-        $movieData['user_id'] = auth()->id();
+        $userId = auth()->id();
+        $createMovieDTO = CreateMovieDTO::fromRequest($request->validated(), $userId);
         
-        $movie = $this->movieService->createMovie($movieData);
+        $movie = $this->movieApplicationService->createMovie($createMovieDTO);
         return new MovieResource($movie);
     }
 
     public function update(UpdateMovieRequest $request, int $id): MovieResource
     {
-        $movie = $this->movieService->updateMovie($id, $request->validated());
+        $userId = auth()->id();
+        $updateMovieDTO = UpdateMovieDTO::fromRequest($request->validated());
+        
+        $movie = $this->movieApplicationService->updateMovie($id, $updateMovieDTO, $userId);
         return new MovieResource($movie);
     }
 
     public function destroy(int $id): JsonResponse
     {
-        $this->movieService->deleteMovie($id);
+        $userId = auth()->id();
+        $this->movieApplicationService->deleteMovie($id, $userId);
         return response()->json(null, 204);
     }
 }
