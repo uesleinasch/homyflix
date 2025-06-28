@@ -15,7 +15,7 @@ import './App.css'
 function App() {
 
   return (
-    <MantineProvider>
+    <MantineProvider >
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         

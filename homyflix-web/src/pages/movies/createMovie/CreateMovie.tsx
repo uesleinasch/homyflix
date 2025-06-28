@@ -36,6 +36,9 @@ const CreateMovie: React.FC = () => {
   const [isLoadingMovie, setIsLoadingMovie] = useState(false);
   const [movieLoadError, setMovieLoadError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [posterPreview, setPosterPreview] = useState<string | null>(null);
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const {
     register,
@@ -89,6 +92,11 @@ const CreateMovie: React.FC = () => {
         setValue('genre', movie.genre);
         setValue('synopsis', movie.synopsis);
         setValue('poster_url', movie.poster_url || '');
+        
+        // Carregar preview da imagem se existir
+        if (movie.poster_url) {
+          validateAndLoadImage(movie.poster_url);
+        }
       } else {
         setMovieLoadError(result.error || 'Erro ao carregar filme');
       }
@@ -157,6 +165,59 @@ const CreateMovie: React.FC = () => {
   const handleCancel = useCallback(() => {
     navigate('/movies');
   }, [navigate]);
+
+  // Função para validar e carregar preview da imagem
+  const validateAndLoadImage = useCallback((url: string) => {
+    if (!url.trim()) {
+      setPosterPreview(null);
+      setImageError(null);
+      return;
+    }
+
+    // Validar se é uma URL válida
+    try {
+      new URL(url);
+    } catch {
+      setImageError('URL inválida');
+      setPosterPreview(null);
+      return;
+    }
+
+    setIsImageLoading(true);
+    setImageError(null);
+
+    // Criar nova imagem para testar se carrega
+    const img = new Image();
+    
+    img.onload = () => {
+      setPosterPreview(url);
+      setImageError(null);
+      setIsImageLoading(false);
+    };
+
+    img.onerror = () => {
+      setImageError('Não foi possível carregar a imagem');
+      setPosterPreview(null);
+      setIsImageLoading(false);
+    };
+
+    img.src = url;
+  }, []);
+
+  // Função para lidar com mudanças no campo de URL do poster
+  const handlePosterUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    
+    // Atualizar o valor do formulário
+    setValue('poster_url', url);
+    
+    // Debounce para evitar muitas requisições
+    const timeoutId = setTimeout(() => {
+      validateAndLoadImage(url);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [setValue, validateAndLoadImage]);
 
   // Loading state para carregamento do filme
   if (isEditMode && isLoadingMovie) {
@@ -270,11 +331,72 @@ const CreateMovie: React.FC = () => {
             id="poster_url"
             type="url"
             {...register('poster_url')}
+            onChange={handlePosterUrlChange}
             disabled={loading}
             placeholder="https://exemplo.com/poster.jpg"
             style={{ width: '100%', padding: '8px', marginTop: '4px' }}
           />
           {errors.poster_url && <span style={{ color: 'red' }}>{errors.poster_url.message}</span>}
+          
+          {/* Preview da imagem */}
+          <div style={{ marginTop: '12px' }}>
+            {isImageLoading && (
+              <div style={{ 
+                padding: '20px', 
+                textAlign: 'center', 
+                backgroundColor: '#f8f9fa',
+                border: '1px dashed #dee2e6',
+                borderRadius: '4px'
+              }}>
+                <p>Carregando preview da imagem...</p>
+              </div>
+            )}
+            
+            {imageError && (
+              <div style={{ 
+                padding: '12px', 
+                backgroundColor: '#f8d7da', 
+                color: '#721c24', 
+                border: '1px solid #f5c6cb',
+                borderRadius: '4px'
+              }}>
+                <p>{imageError}</p>
+              </div>
+            )}
+            
+            {posterPreview && !isImageLoading && !imageError && (
+              <div style={{ 
+                marginTop: '8px',
+                border: '1px solid #dee2e6',
+                borderRadius: '4px',
+                overflow: 'hidden',
+                maxWidth: '300px'
+              }}>
+                <img
+                  src={posterPreview}
+                  alt="Preview do poster"
+                  style={{ 
+                    width: '100%', 
+                    height: 'auto',
+                    maxHeight: '400px',
+                    objectFit: 'cover'
+                  }}
+                  onError={() => {
+                    setImageError('Erro ao exibir a imagem');
+                    setPosterPreview(null);
+                  }}
+                />
+                <div style={{ 
+                  padding: '8px', 
+                  backgroundColor: '#f8f9fa',
+                  fontSize: '12px',
+                  color: '#6c757d'
+                }}>
+                  Preview do poster
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Botões de ação */}
