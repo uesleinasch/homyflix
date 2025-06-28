@@ -17,9 +17,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         dispatch(syncAuthState());
       }
     };
-
     window.addEventListener('storage', handleStorageChange);
-    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
