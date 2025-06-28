@@ -20,5 +20,14 @@ class Movie extends Model
         'genre',
         'synopsis',
         'poster_url',
+        'user_id',
     ];
+
+    /**
+     * Get the user that owns the movie.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

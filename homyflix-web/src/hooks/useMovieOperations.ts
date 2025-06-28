@@ -148,6 +148,11 @@ export const useMovieOperations = () => {
     deleteExistingMovie,
     clearMovieError,
     
+    // Aliases para compatibilidade
+    createMovie: createNewMovie,
+    updateMovie: updateExistingMovie,
+    deleteMovie: deleteExistingMovie,
+    
     // Selectors
     getMovieById,
     
