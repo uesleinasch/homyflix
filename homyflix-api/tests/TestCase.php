@@ -29,8 +29,6 @@ abstract class TestCase extends BaseTestCase
     {
         // Garantir que estamos em ambiente de teste
         $this->app['config']->set('app.env', 'testing');
-        
-        // Configurar banco de dados de teste
         $this->app['config']->set('database.default', 'pgsql');
         $this->app['config']->set('database.connections.pgsql', [
             'driver' => 'pgsql',
@@ -45,27 +43,15 @@ abstract class TestCase extends BaseTestCase
             'schema' => 'public',
             'sslmode' => 'prefer',
         ]);
-
-        // Configurar cache para testes
         $this->app['config']->set('cache.default', 'array');
-        
-        // Configurar sessão para testes
         $this->app['config']->set('session.driver', 'array');
-        
-        // Configurar queue para testes
         $this->app['config']->set('queue.default', 'sync');
-        
-        // Configurar mail para testes
         $this->app['config']->set('mail.default', 'array');
-        
-        // Configurar logging para testes
         $this->app['config']->set('logging.default', 'single');
         $this->app['config']->set('logging.channels.single.level', 'error');
         
-        // Configurar JWT para testes
+
         $this->app['config']->set('jwt.ttl', 60);
-        
-        // Desabilitar verificação de CSRF para testes de API
         $this->withoutMiddleware([
             \App\Http\Middleware\VerifyCsrfToken::class,
         ]);
