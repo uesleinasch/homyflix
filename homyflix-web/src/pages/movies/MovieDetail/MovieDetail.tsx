@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useMovieOperations } from '../../../hooks/useMovieOperations';
+import { useMovieOperations } from '../../../core/hooks/useMovieOperations';
 import type { Movie } from '../../../types/movie';
 
 const MovieDetail: React.FC = () => {

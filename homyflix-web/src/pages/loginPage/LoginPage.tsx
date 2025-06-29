@@ -20,7 +20,7 @@ import {
   LoginSchema,
   type LoginFormData,
 } from "../../core/auth/schemas/authSchemas";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../core/hooks/useAuth";
 import styles from "./style.module.css";
 
 const LoginPage: React.FC = () => {

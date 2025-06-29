@@ -17,7 +17,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { EyeIcon, EyeSlashIcon, XIcon } from '@phosphor-icons/react';
 import { RegisterSchema, type RegisterFormData } from '../../core/auth/schemas/authSchemas';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../core/hooks/useAuth';
 import styles from './style.module.css';
 
 const RegisterPage: React.FC = () => {

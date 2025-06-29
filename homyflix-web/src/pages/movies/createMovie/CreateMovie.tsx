@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useMovieOperations } from '../../../hooks/useMovieOperations';
+import { useMovieOperations } from '../../../core/hooks/useMovieOperations';
 
 // Schema de validação baseado nas regras da API
 const createMovieSchema = z.object({

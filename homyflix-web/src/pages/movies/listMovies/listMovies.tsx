@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMovieOperations } from "../../../hooks/useMovieOperations";
+import { useMovieOperations } from "../../../core/hooks/useMovieOperations";
 import type { Movie } from "../../../types/movie";
 import MantineContainer from "../../../shared/components/ui/mantineContainer/MantineContainer";
 
