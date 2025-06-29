@@ -1,7 +1,7 @@
 // Application Service Layer - Coordena casos de uso de autenticação
 import { authService } from './authService';
-import type { LoginCredentials, RegisterData, AuthResponse } from '../../types/auth';
-import type { User } from '../../types/user';
+import type { LoginCredentials, RegisterData, AuthResponse } from '../types/auth';
+import type { User } from '../types/user';
 import { tokenManager } from '../../core/auth/tokenManager';
 
 export class AuthApplicationService {

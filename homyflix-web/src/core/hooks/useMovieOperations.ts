@@ -15,7 +15,7 @@ import {
   selectMovieById,
 } from '../../store/slices/movieSlice';
 import { clearAuthState } from '../../store/slices/authSlice';
-import type {  MovieCreateData, MovieUpdateData } from '../../types/movie';
+import type {  MovieCreateData, MovieUpdateData } from '../../shared/types/movie';
 
 export const useMovieOperations = () => {
   const dispatch = useDispatch<AppDispatch>();

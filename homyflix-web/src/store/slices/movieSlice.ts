@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { movieService } from '../../core/services/movieService';
-import type { Movie, MovieState, MovieCreateData, MovieUpdateData } from '../../types/movie';
+import type { Movie, MovieState, MovieCreateData, MovieUpdateData } from '../../shared/types/movie';
 
 const initialState: MovieState = {
   movies: [],

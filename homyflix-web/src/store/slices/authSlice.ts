@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { authApplicationService } from '../../shared/services/authApplicationService';
 import { tokenManager } from '../../core/auth/tokenManager';
-import type { AuthState, LoginCredentials, RegisterData, AuthResponse } from '../../types/auth';
+import type { AuthState, LoginCredentials, RegisterData, AuthResponse } from '../../shared/types/auth';
 
 const initialState: AuthState = {
   user: tokenManager.getCurrentUser(),

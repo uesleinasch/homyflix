@@ -1,4 +1,4 @@
-import type { LoginCredentials, AuthResponse, RegisterData } from "../../types/auth";
+import type { LoginCredentials, AuthResponse, RegisterData } from "../../shared/types/auth";
 import api from "../auth/api";
 
 const setSession = (accessToken: string | null, refreshToken?: string | null) => {

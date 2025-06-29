@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMovieOperations } from "../../../core/hooks/useMovieOperations";
-import type { Movie } from "../../../types/movie";
+import type { Movie } from "../../../shared/types/movie";
 import MantineContainer from "../../../shared/components/ui/mantineContainer/MantineContainer";
 
 // Schema de validação para filtros
