@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import type { AppDispatch, RootState } from '../store/store';
+import type { AppDispatch, RootState } from '../../store/store';
 import {
   fetchMovies,
   fetchMovieById,
@@ -13,9 +13,9 @@ import {
   selectMoviesLoading,
   selectMoviesError,
   selectMovieById,
-} from '../store/slices/movieSlice';
-import { clearAuthState } from '../store/slices/authSlice';
-import type {  MovieCreateData, MovieUpdateData } from '../types/movie';
+} from '../../store/slices/movieSlice';
+import { clearAuthState } from '../../store/slices/authSlice';
+import type {  MovieCreateData, MovieUpdateData } from '../../shared/types/movie';
 
 export const useMovieOperations = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -89,7 +89,7 @@ export const useMovieOperations = () => {
     });
   }, [dispatch, withAuthErrorHandling]);
 
-  // Criar novo filme
+  // Cadastrar novo filme
   const createNewMovie = useCallback(async (movieData: MovieCreateData) => {
     return withAuthErrorHandling(async () => {
       const result = await dispatch(createMovie(movieData)).unwrap();

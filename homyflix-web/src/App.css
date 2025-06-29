@@ -1,42 +1,248 @@
+:root {
+
+  /* ===== PALETA DE CORES HOMYFLIX ===== */
+  
+  /* Cores Primárias */
+  --primary-50: #fff7ed;
+  --primary-100: #ffedd5;
+  --primary-200: #fed7aa;
+  --primary-300: #fdba74;
+  --primary-400: #fb923c;
+  --primary-500: #ff8c00; /* Cor principal */
+  --primary-600: #ea580c;
+  --primary-700: #c2410c;
+  --primary-800: #9a3412;
+  --primary-900: #7c2d12;
+  --primary-950: #431407;
+
+  /* Cores Secundárias (Complementar - Azul) */
+  --secondary-50: #eff6ff;
+  --secondary-100: #dbeafe;
+  --secondary-200: #bfdbfe;
+  --secondary-300: #93c5fd;
+  --secondary-400: #60a5fa;
+  --secondary-500: #3b82f6;
+  --secondary-600: #2563eb;
+  --secondary-700: #1d4ed8;
+  --secondary-800: #1e40af;
+  --secondary-900: #1e3a8a;
+  --secondary-950: #172554;
+
+  /* Cores Neutras */
+  --neutral-50: #fafafa;
+  --neutral-100: #f4f4f5;
+  --neutral-200: #e4e4e7;
+  --neutral-300: #d4d4d8;
+  --neutral-400: #a1a1aa;
+  --neutral-500: #71717a;
+  --neutral-600: #52525b;
+  --neutral-700: #3f3f46;
+  --neutral-800: #27272a;
+  --neutral-900: #18181b;
+  --neutral-950: #09090b;
+
+  /* Cores de Estado */
+  --success-50: #f0fdf4;
+  --success-100: #dcfce7;
+  --success-200: #bbf7d0;
+  --success-300: #86efac;
+  --success-400: #4ade80;
+  --success-500: #22c55e;
+  --success-600: #16a34a;
+  --success-700: #15803d;
+  --success-800: #166534;
+  --success-900: #14532d;
+
+  --warning-50: #fffbeb;
+  --warning-100: #fef3c7;
+  --warning-200: #fde68a;
+  --warning-300: #fcd34d;
+  --warning-400: #fbbf24;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
+  --warning-700: #b45309;
+  --warning-800: #92400e;
+  --warning-900: #78350f;
+
+  --error-50: #fef2f2;
+  --error-100: #fee2e2;
+  --error-200: #fecaca;
+  --error-300: #fca5a5;
+  --error-400: #f87171;
+  --error-500: #ef4444;
+  --error-600: #dc2626;
+  --error-700: #b91c1c;
+  --error-800: #991b1b;
+  --error-900: #7f1d1d;
+
+  --info-50: #eff6ff;
+  --info-100: #dbeafe;
+  --info-200: #bfdbfe;
+  --info-300: #93c5fd;
+  --info-400: #60a5fa;
+  --info-500: #3b82f6;
+  --info-600: #2563eb;
+  --info-700: #1d4ed8;
+  --info-800: #1e40af;
+  --info-900: #1e3a8a;
+
+  /* ===== CORES SEMÂNTICAS ===== */
+  
+  /* Cores de Texto */
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary: var(--neutral-500);
+  --text-inverse: var(--neutral-50);
+  --text-disabled: var(--neutral-400);
+
+  /* Cores de Background */
+  --bg-primary: var(--neutral-50);
+  --bg-secondary: var(--neutral-100);
+  --bg-tertiary: var(--neutral-200);
+  --bg-inverse: var(--neutral-900);
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Cores de Borda */
+  --border-primary: var(--neutral-200);
+  --border-secondary: var(--neutral-300);
+  --border-focus: var(--primary-500);
+  --border-error: var(--error-500);
+
+  /* Cores de Botões */
+  --btn-primary-bg: var(--primary-500);
+  --btn-primary-hover: var(--primary-600);
+  --btn-primary-active: var(--primary-700);
+  --btn-primary-text: white;
+
+  --btn-secondary-bg: var(--secondary-500);
+  --btn-secondary-hover: var(--secondary-600);
+  --btn-secondary-active: var(--secondary-700);
+  --btn-secondary-text: white;
+
+  --btn-outline-bg: transparent;
+  --btn-outline-border: var(--primary-500);
+  --btn-outline-text: var(--primary-500);
+  --btn-outline-hover-bg: var(--primary-50);
+
+  --btn-ghost-bg: transparent;
+  --btn-ghost-text: var(--neutral-700);
+  --btn-ghost-hover-bg: var(--neutral-100);
+
+  /* Cores de Input */
+  --input-bg: white;
+  --input-border: var(--neutral-300);
+  --input-border-focus: var(--primary-500);
+  --input-text: var(--neutral-900);
+  --input-placeholder: var(--neutral-400);
+
+  /* Cores de Card */
+  --card-bg: white;
+  --card-border: var(--neutral-200);
+  --card-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Cores específicas do Homyflix */
+  --movie-card-bg: white;
+  --movie-card-hover: var(--primary-50);
+  --movie-rating: var(--warning-400);
+  --movie-genre: var(--secondary-500);
+
+  /* ===== GRADIENTES ===== */
+  --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%);
+  --gradient-overlay: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+
+  /* ===== SOMBRAS ===== */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-primary: 0 10px 15px -3px rgba(255, 140, 0, 0.2), 0 4px 6px -2px rgba(255, 140, 0, 0.1);
+
+  /* ===== DARK MODE ===== */
+  --dark-bg-primary: var(--neutral-900);
+  --dark-bg-secondary: var(--neutral-800);
+  --dark-bg-tertiary: var(--neutral-700);
+  --dark-text-primary: var(--neutral-50);
+  --dark-text-secondary: var(--neutral-300);
+  --dark-text-tertiary: var(--neutral-400);
+  --dark-border-primary: var(--neutral-700);
+  --dark-border-secondary: var(--neutral-600);
+}
+
+
+/* ===== MEDIA QUERIES PARA DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: var(--dark-bg-primary);
+    --bg-secondary: var(--dark-bg-secondary);
+    --bg-tertiary: var(--dark-bg-tertiary);
+    --text-primary: var(--dark-text-primary);
+    --text-secondary: var(--dark-text-secondary);
+    --text-tertiary: var(--dark-text-tertiary);
+    --border-primary: var(--dark-border-primary);
+    --border-secondary: var(--dark-border-secondary);
+    --card-bg: var(--neutral-800);
+    --input-bg: var(--neutral-800);
+  }
+}
+
+/* Classe para forçar dark mode */
+.dark {
+  --bg-primary: var(--dark-bg-primary);
+  --bg-secondary: var(--dark-bg-secondary);
+  --bg-tertiary: var(--dark-bg-tertiary);
+  --text-primary: var(--dark-text-primary);
+  --text-secondary: var(--dark-text-secondary);
+  --text-tertiary: var(--dark-text-tertiary);
+  --border-primary: var(--dark-border-primary);
+  --border-secondary: var(--dark-border-secondary);
+  --card-bg: var(--neutral-800);
+  --input-bg: var(--neutral-800);
+}
+
+/* Classe para forçar light mode */
+.light {
+  --bg-primary: var(--neutral-50);
+  --bg-secondary: var(--neutral-100);
+  --bg-tertiary: var(--neutral-200);
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary: var(--neutral-500);
+  --border-primary: var(--neutral-200);
+  --border-secondary: var(--neutral-300);
+  --card-bg: white;
+  --input-bg: white;
+}
+
+
+html {
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+body {
+  overflow: hidden;
+  
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+button {
+  outline: none;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+button:focus{
+  outline: none !important;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+a:hover {
+  color: inherit !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+button:hover {
+  border: none !important;
 }

@@ -15,9 +15,9 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login, register, logout, refreshToken, syncAuthState, clearAuthState } from '../store/slices/authSlice';
-import type { LoginCredentials, RegisterData } from '../types/auth';
-import type { AppDispatch, RootState } from '../store/store';
+import { login, register, logout, refreshToken, syncAuthState, clearAuthState } from '../../store/slices/authSlice';
+import type { LoginCredentials, RegisterData } from '../../shared/types/auth';
+import type { AppDispatch, RootState } from '../../store/store';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();

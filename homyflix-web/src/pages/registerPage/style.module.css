@@ -1,0 +1,58 @@
+.registerCoverImage {
+  display: none;
+}
+.registerPaper {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0px;
+}
+.registerButton {
+  background-color: var(--primary-500);
+  color: white;
+  transition: background-color 0.3s ease;
+}
+.registerButton:hover {
+  background-color: var(--primary-600);
+  border: none;
+}
+
+.loginButton {
+  border-color: var(--primary-500);
+  color: var(--primary-500);
+  transition: background-color 0.3s ease;
+}
+.loginButton:hover {
+  background-color: var(--primary-600);
+  color: white;
+}
+
+.LogoEffect {
+  animation: logoEffect 1s ease-in-out;
+  transition: all 0.3s ease;
+}
+.LogoEffect:hover {
+  cursor: pointer;
+  transform: rotate(360deg);
+}
+
+/* Tablet - 768px+ */
+@media (min-width: 768px) {
+}
+
+/* Desktop - 1024px+ */
+@media (min-width: 1024px) {
+    .registerPaper {
+        width: 600px;
+    }
+  .registerCoverImage {
+    display: block;
+  }
+}
+
+/* Large Desktop - 1440px+ */
+@media (min-width: 1440px) {
+}
+
+/* Extra Large Desktop - 1920px+ */
+@media (min-width: 1920px) {
+}

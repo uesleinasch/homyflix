@@ -1,5 +1,5 @@
 import api from '../auth/api';
-import type { Movie, MovieCreateData, MovieUpdateData } from '../../types/movie';
+import type { Movie, MovieCreateData, MovieUpdateData } from '../../shared/types/movie';
 import { isAxiosError } from 'axios';
 
 interface ApiMovieResponse extends Omit<Movie, 'release_year'> {

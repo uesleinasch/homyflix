@@ -1,8 +1,8 @@
 // Domain Service Layer - Lógica de domínio de autenticação
 import { AxiosError } from 'axios';
 import api from '../../core/auth/api';
-import type { LoginCredentials, RegisterData, AuthResponse } from '../../types/auth';
-import type { User } from '../../types/user';
+import type { LoginCredentials, RegisterData, AuthResponse } from '../types/auth';
+import type { User } from '../types/user';
 
 interface ApiErrorResponse {
   message: string;

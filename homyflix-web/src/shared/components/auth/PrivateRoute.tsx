@@ -1,6 +1,7 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../../core/hooks/useAuth";
+import MainLayout from "../../../Layout/MainLayout/MainLayout";
 
 interface PrivateRouteProps {
   redirectTo?: string;
@@ -23,7 +24,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     return <Navigate to={redirectTo} replace />;
   }
 
-  return <Outlet />;
+  return <MainLayout />;
 };
 
 export default PrivateRoute;

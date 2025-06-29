@@ -1,50 +1,180 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../core/hooks/useAuth";
+import { useMovieOperations } from "../../core/hooks/useMovieOperations";
+import {
+  Group,
+  Text,
+  Button,
+  Stack,
+  ActionIcon,
+  Badge,
+  Card,
+  SimpleGrid,
+  Title,
+  Skeleton,
+} from "@mantine/core";
+import { FilmStripIcon, PlusIcon, CaretRightIcon } from "@phosphor-icons/react";
+import MantineContainer from "../../shared/components/ui/mantineContainer/MantineContainer";
+import DashboardMovieCard from "./components/dashboardMovieCard/DashboardMovieCard";
 
 const DashboardPage: React.FC = () => {
-  const { user, logoutUser } = useAuth();
+  const { user } = useAuth();
+  const { movies, loading } = useMovieOperations();
+  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await logoutUser();
+  const recentMovies = movies
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    )
+    .slice(0, 6);
+
+  const handleMovieClick = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
   };
 
+  const dashboardCards = [
+    {
+      title: "Meus Filmes",
+      description: "Visualizar e gerenciar todos os filmes cadastrados",
+      icon: <FilmStripIcon size={24} />,
+      href: "/movies",
+      color: "orange",
+    },
+    {
+      title: "Adicionar Filme",
+      description: "Cadastrar um novo filme na sua biblioteca",
+      icon: <PlusIcon size={24} />,
+      href: "/movies/create",
+      color: "orange",
+    },
+  ];
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        >
-          Sair
-        </button>
-      </div>
+    <MantineContainer miw={"100%"}>
+      <Stack gap="lg">
+        <Group justify="space-between" align="center">
+          <div>
+            <Title order={1} size="h2">
+              Dashboard
+            </Title>
+            <Text c="dimmed" size="sm">
+              Bem-vindo de volta, {user?.name}!
+            </Text>
+          </div>
+          <Badge variant="light" color="green" size="lg">
+            Online
+          </Badge>
+        </Group>
 
-      {user && (
-        <div className="mb-8">
-          <p className="text-lg">Bem-vindo, {user.name}!</p>
-        </div>
-      )}
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+          {dashboardCards.map((card) => (
+            <Card
+              key={card.href}
+              shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder
+              component={Link}
+              to={card.href}
+              style={{
+                textDecoration: "none",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.12)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "";
+              }}
+            >
+              <Group justify="space-between" mb="xs">
+                <Text fw={500} size="lg">
+                  {card.title}
+                </Text>
+                <ActionIcon variant="light" color={card.color} size="lg">
+                  {card.icon}
+                </ActionIcon>
+              </Group>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link
-          to="/movies"
-          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
-        >
-          <h2 className="text-xl font-semibold mb-2">Meus Filmes</h2>
-          <p className="text-gray-600">Visualizar todos os filmes cadastrados</p>
-        </Link>
+              <Text size="sm" c="dimmed">
+                {card.description}
+              </Text>
 
-        <Link
-          to="/movies/create"
-          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
-        >
-          <h2 className="text-xl font-semibold mb-2">Adicionar Filme</h2>
-          <p className="text-gray-600">Cadastrar um novo filme na biblioteca</p>
-        </Link>
-      </div>
-    </div>
+              <Button
+                variant="light"
+                color={card.color}
+                fullWidth
+                mt="md"
+                radius="md"
+                rightSection={<CaretRightIcon size={16} />}
+              >
+                Acessar
+              </Button>
+            </Card>
+          ))}
+        </SimpleGrid>
+
+        {/* Seção dos últimos filmes adicionados */}
+        <Card withBorder padding="lg" radius="md">
+          <Group justify="space-between" mb="md">
+            <Text fw={500} size="lg">
+              Últimos adicionados
+            </Text>
+            {movies.length > 0 && (
+              <Button
+                variant="subtle"
+                color="orange"
+                size="sm"
+                component={Link}
+                to="/movies"
+                rightSection={<CaretRightIcon size={14} />}
+              >
+                Ver todos
+              </Button>
+            )}
+          </Group>
+
+          {loading ? (
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 6 }} spacing="md">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} height={200} radius="md" />
+              ))}
+            </SimpleGrid>
+          ) : recentMovies.length > 0 ? (
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 6 }} spacing="md">
+              {recentMovies.map((movie) => (
+                <DashboardMovieCard
+                  key={movie.id}
+                  movie={movie}
+                  onClick={() => handleMovieClick(movie.id)}
+                />
+              ))}
+            </SimpleGrid>
+          ) : (
+            <Stack align="center" py="xl">
+              <Text c="dimmed" ta="center">
+                Nenhum filme cadastrado ainda.
+              </Text>
+              <Button
+                variant="light"
+                color="orange"
+                component={Link}
+                to="/movies/create"
+                leftSection={<PlusIcon size={16} />}
+              >
+                Cadastrar primeiro filme
+              </Button>
+            </Stack>
+          )}
+        </Card>
+      </Stack>
+    </MantineContainer>
   );
 };
 
