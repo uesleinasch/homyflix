@@ -1,0 +1,22 @@
+.mobileSaveButton {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99;
+}
+
+@media (max-width: 768px) {
+  .mobileSaveButton {
+    display: block;
+  }
+}
+.desktopSaveButton {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktopSaveButton {
+    display: flex;
+  }
+}

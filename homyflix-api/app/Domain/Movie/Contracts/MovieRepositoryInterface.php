@@ -13,7 +13,14 @@ interface MovieRepositoryInterface
      */
     public function findAll(int $perPage = 15): LengthAwarePaginator;
 
+    /**
+     * @return LengthAwarePaginator|Movie[]
+     */
+    public function findAllByUser(int $userId, int $perPage = 15): LengthAwarePaginator;
+
     public function findById(int $id): ?Movie;
+
+    public function findByIdAndUser(int $id, int $userId): ?Movie;
 
     public function create(array $data): Movie;
 

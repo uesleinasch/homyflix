@@ -1,0 +1,45 @@
+.toggleFilters {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: block;
+  z-index: 99;
+  outline: none;
+}
+.toggleFilters:focus {
+  outline: none;
+  border: none;
+}
+
+/* hide from tablet */
+@media (min-width: 768px) {
+  .toggleFilters {
+    display: none;
+  }
+}
+
+.filtersContainer {
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.filtersContainer.visible {
+  opacity: 1;
+  max-height: 500px;
+  transform: translateY(0);
+}
+
+.filtersContainer.hidden {
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-10px);
+}
+
+/* Show filters by default on desktop */
+@media (min-width: 768px) {
+  .filtersContainer {
+    opacity: 1 !important;
+    max-height: none !important;
+    transform: none !important;
+  }
+}

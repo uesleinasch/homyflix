@@ -1,51 +1,68 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
+import { createTheme, MantineProvider, type MantineColorsTuple } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/loginPage/LoginPage';
+import RegisterPage from './pages/registerPage/RegisterPage';
+import DashboardPage from './pages/dashboardPage/DashboardPage';
+import NotFoundPage from './pages/notfoundPage/NotFoundPage';
+import PrivateRoute from './shared/components/auth/PrivateRoute';
+import PublicRoute from './shared/components/auth/PublicRoute';
+import ListMovies from './pages/movies/listMovies/listMovies';
+import CreateMovie from './pages/movies/createMovie/CreateMovie';
+import MovieDetail from './pages/movies/MovieDetail/MovieDetail';
+import ProfilePage from './pages/profile/ProfilePage';
+import SettingsPage from './pages/settings/SettingsPage';
+import FavoritesPage from './pages/favorites/FavoritesPage';
 import './App.css'
+const myColor: MantineColorsTuple = [
+  '#fff4e1',
+  '#ffe8cc',
+  '#fed09b',
+  '#fdb766',
+  '#fca13a',
+  '#fc931d',
+  '#fc8a08',
+  '#e17800',
+  '#c86a00',
+  '#af5a00'
+];
+
+const theme = createTheme({
+  colors: {
+    myColor,
+  }
+});
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [apiResponse, setApiResponse] = useState('');
-
-  useEffect(() => {
-    fetch('http://localhost:8000/api/user') // A porta 8000 é a porta exposta do backend no docker-compose
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => setApiResponse(JSON.stringify(data, null, 2)))
-      .catch(error => setApiResponse(`Error fetching data: ${error.message}`));
-  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <div className="card">
-        <h2>API Connection Test:</h2>
-        <pre>{apiResponse}</pre>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <MantineProvider theme={theme}>
+      <Notifications />
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        
+        <Route path="/" element={<PublicRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
+
+        <Route path="/" element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/movies" element={<ListMovies />} />
+          <Route path="/movies/create" element={<CreateMovie />} />
+          <Route path="/movies/:id" element={<MovieDetail />} />
+          <Route path="/movies/:id/edit" element={<CreateMovie />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </MantineProvider>
   )
 }
 
