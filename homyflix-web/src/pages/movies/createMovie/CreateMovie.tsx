@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMovieOperations } from "../../../core/hooks/useMovieOperations";
 import MantineContainer from "../../../shared/components/ui/mantineContainer/MantineContainer";
@@ -24,31 +23,11 @@ import {
 import { YearPickerInput } from "@mantine/dates";
 import { FloppyDiskBackIcon, InfoIcon, XIcon } from "@phosphor-icons/react";
 import Header from "../../../shared/components/ui/header/Header";
+import LoadScreen from "../../../shared/components/ui/loaderScreen/LoadScreen";
 import styles from "./style.module.css";
+import { createMovieSchema } from "../schema/CreateMovieSchema";
+import type { CreateMovieFormData } from "./createMovie";
 
-// Schema de validação baseado nas regras da API
-const createMovieSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Título é obrigatório")
-    .max(255, "Título deve ter no máximo 255 caracteres"),
-  release_year: z
-    .number()
-    .int("Ano deve ser um número inteiro")
-    .min(1888, "Ano deve ser maior ou igual a 1888")
-    .max(
-      new Date().getFullYear() + 5,
-      "Ano não pode ser muito distante no futuro"
-    ),
-  genre: z
-    .string()
-    .min(1, "Gênero é obrigatório")
-    .max(100, "Gênero deve ter no máximo 100 caracteres"),
-  synopsis: z.string().min(1, "Sinopse é obrigatória"),
-  poster_url: z.string().url("URL inválida").optional().or(z.literal("")),
-});
-
-type CreateMovieFormData = z.infer<typeof createMovieSchema>;
 
 const CreateMovie: React.FC = () => {
   const navigate = useNavigate();
@@ -255,10 +234,10 @@ const CreateMovie: React.FC = () => {
   // Loading state para carregamento do filme
   if (isEditMode && isLoadingMovie) {
     return (
-      <div>
-        <h1>Carregando filme...</h1>
-        <p>Por favor, aguarde enquanto carregamos os dados do filme.</p>
-      </div>
+      <LoadScreen 
+        isLoading={true} 
+        loadingText="Carregando informações do filme..." 
+      />
     );
   }
 
@@ -277,6 +256,12 @@ const CreateMovie: React.FC = () => {
 
   return (
     <MantineContainer>
+      {/* LoadScreen para operações de salvamento */}
+      <LoadScreen 
+        isLoading={loading} 
+        loadingText={isEditMode ? "Atualizando filme..." : "Criando filme..."} 
+      />
+      
       <Header title={isEditMode ? "Editar Filme" : "Cadastrar Novo Filme"}>
         <ActionIcon
           size={40}

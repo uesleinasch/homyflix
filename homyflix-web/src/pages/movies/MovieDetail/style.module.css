@@ -1,0 +1,131 @@
+.container{
+    position: relative;
+    width: calc(100vw - 280px);
+    height: calc(100vh - 70px);
+    background-color: white;
+    z-index: 1000;
+    top: 70px;
+    left: 280px;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    display: block;
+    overflow-y: auto;
+}
+.poster{
+    display: block;
+}
+.heroImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 600px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: 1000;
+    will-change: transform;
+    backface-visibility: hidden;
+    overflow: hidden;
+}
+
+.heroImage::after {
+    background: radial-gradient(
+        ellipse 70% 50% at center top,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 20%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.6) 75%,
+        rgba(255, 255, 255, 0.8) 90%,
+        rgba(255, 255, 255, 1) 100%
+    ),
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.1) 10%,
+        rgba(255, 255, 255, 0.2) 30%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0.6) 70%,
+        rgba(255, 255, 255, 0.8) 85%,
+        rgba(255, 255, 255, 1) 100%
+    );
+}
+
+.heroImage::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.2) 20%,
+        rgba(255, 255, 255, 0.4) 40%,
+        rgba(255, 255, 255, 0.6) 60%,
+        rgba(255, 255, 255, 0.8) 80%,
+        rgba(255, 255, 255, 0.95) 95%,
+        white 100%
+    );
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.heroImage::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 40%,
+        rgba(255, 255, 255, 0.5) 70%,
+        rgba(255, 255, 255, 0.8) 90%,
+        white 100%
+    );
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.heroImageBackground {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: calc(100% + 100px);
+    height: calc(100% + 100px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    will-change: transform;
+    backface-visibility: hidden;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .poster{
+        display: none;
+    }
+    .container {
+        width: 100vw;
+        left: 0;
+        top: 70px;
+    }
+    
+    .heroImage {
+        height: 400px;
+        background-attachment: scroll;
+    }
+    
+    .heroImageBackground {
+        top: -30px;
+        left: -30px;
+        width: calc(100% + 60px);
+        height: calc(100% + 60px);
+    }
+}

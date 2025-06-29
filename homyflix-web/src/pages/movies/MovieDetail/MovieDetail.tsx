@@ -1,23 +1,44 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useMovieOperations } from '../../../core/hooks/useMovieOperations';
-import type { Movie } from '../../../shared/types/movie';
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useMovieOperations } from "../../../core/hooks/useMovieOperations";
+import type { Movie } from "../../../shared/types/movie";
+import {
+  ActionIcon,
+  BackgroundImage,
+  Badge,
+  Box,
+  Button,
+  Card,
+  Divider,
+  Flex,
+  Grid,
+  Text,
+  Title,
+} from "@mantine/core";
+import { ArrowLeftIcon, PenIcon, TrashIcon } from "@phosphor-icons/react";
+import LoadScreen from "../../../shared/components/ui/loaderScreen";
+import styles from "./style.module.css";
 
 const MovieDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { loadMovieById, deleteExistingMovie, loading } = useMovieOperations();
-  
+
   const [movie, setMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Refs para efeitos parallax
+  const heroImageRef = useRef<HTMLDivElement>(null);
+  const heroBackgroundRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Carregar dados do filme
   useEffect(() => {
     const movieId = id ? parseInt(id) : null;
-    
+
     if (!movieId || isNaN(movieId)) {
-      setError('ID do filme inválido');
+      setError("ID do filme inválido");
       setIsLoading(false);
       return;
     }
@@ -25,19 +46,89 @@ const MovieDetail: React.FC = () => {
     loadMovieData(movieId);
   }, [id]);
 
+  // Efeito parallax no mouse
+  useEffect(() => {
+    if (!movie) return;
+
+    let rafId: number;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+
+    const updateParallax = () => {
+      if (!heroBackgroundRef.current) return;
+
+      const { innerWidth, innerHeight } = window;
+      const xPercent = (mouseX / innerWidth - 0.5) * 15;
+      const yPercent = (mouseY / innerHeight - 0.5) * 15;
+      
+      heroBackgroundRef.current.style.transform = 
+        `translate(${xPercent}px, ${yPercent}px) scale(1.05)`;
+      
+      rafId = requestAnimationFrame(updateParallax);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    rafId = requestAnimationFrame(updateParallax);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, [movie]);
+
+  // Apenas funciona, pelo amor de GOD
+  useEffect(() => {
+    if (!movie) return;
+
+    let rafId: number;
+    let scrollY = 0;
+
+    const handleScroll = () => {
+      if (containerRef.current) {
+        scrollY = containerRef.current.scrollTop;
+      }
+    };
+
+    const updateScrollParallax = () => {
+      if (!heroImageRef.current) return;
+
+      const parallaxSpeed = 0.3;
+      heroImageRef.current.style.transform = 
+        `translateY(${scrollY * parallaxSpeed}px)`;
+      
+      rafId = requestAnimationFrame(updateScrollParallax);
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll, { passive: true });
+      rafId = requestAnimationFrame(updateScrollParallax);
+
+      return () => {
+        container.removeEventListener('scroll', handleScroll);
+        cancelAnimationFrame(rafId);
+      };
+    }
+  }, [movie]);
+
   const loadMovieData = async (movieId: number) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await loadMovieById(movieId);
       if (result.success && result.data) {
         setMovie(result.data);
       } else {
-        setError(result.error || 'Filme não encontrado');
+        setError(result.error || "Filme não encontrado");
       }
     } catch {
-      setError('Erro inesperado ao carregar filme');
+      setError("Erro inesperado ao carregar filme");
     } finally {
       setIsLoading(false);
     }
@@ -57,42 +148,42 @@ const MovieDetail: React.FC = () => {
     );
 
     if (confirmDelete) {
-      const result = await deleteExistingMovie(movie.id);
-      
-      if (result.success) {
-        alert('Filme excluído com sucesso!');
-        navigate('/movies');
-      } else {
-        alert(`Erro ao excluir filme: ${result.error}`);
+      setIsDeleting(true);
+      try {
+        const result = await deleteExistingMovie(movie.id);
+
+        if (result.success) {
+          alert("Filme excluído com sucesso!");
+          navigate("/movies");
+        } else {
+          alert(`Erro ao excluir filme: ${result.error}`);
+        }
+      } finally {
+        setIsDeleting(false);
       }
     }
   }, [movie, deleteExistingMovie, navigate]);
 
   const handleBackToList = useCallback(() => {
-    navigate('/movies');
+    navigate("/movies");
   }, [navigate]);
 
-  // Loading state
   if (isLoading) {
     return (
-      <div>
-        <h1>Carregando filme...</h1>
-        <p>Por favor, aguarde enquanto carregamos os detalhes do filme.</p>
-        <button onClick={handleBackToList}>
-          ← Voltar para lista
-        </button>
-      </div>
+      <LoadScreen 
+        isLoading={true} 
+        loadingText="Carregando detalhes do filme..." 
+      />
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div>
         <h1>Erro ao carregar filme</h1>
-        <p style={{ color: 'red' }}>{error}</p>
-        <div style={{ marginTop: '20px' }}>
-          <button onClick={handleBackToList} style={{ marginRight: '10px' }}>
+        <p style={{ color: "red" }}>{error}</p>
+        <div style={{ marginTop: "20px" }}>
+          <button onClick={handleBackToList} style={{ marginRight: "10px" }}>
             ← Voltar para lista
           </button>
           <button onClick={() => id && loadMovieData(parseInt(id))}>
@@ -103,192 +194,113 @@ const MovieDetail: React.FC = () => {
     );
   }
 
-  // Movie not found
   if (!movie) {
     return (
       <div>
         <h1>Filme não encontrado</h1>
         <p>O filme solicitado não foi encontrado.</p>
-        <button onClick={handleBackToList}>
-          ← Voltar para lista
-        </button>
+        <button onClick={handleBackToList}>← Voltar para lista</button>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '20px' }}>
-        <button onClick={handleBackToList} style={{ marginBottom: '10px' }}>
-          ← Voltar para lista
-        </button>
-        <h1>{movie.title}</h1>
-      </div>
-
-      {/* Movie Details */}
-      <div style={{ border: '1px solid #ddd', padding: '20px', marginBottom: '20px' }}>
-        {/* Poster */}
-        {movie.poster_url && (
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Poster:</h3>
-            <img 
-              src={movie.poster_url} 
-              alt={`Poster do filme ${movie.title}`}
-              style={{ maxWidth: '300px', maxHeight: '400px', objectFit: 'contain' }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-            <br />
-            <a href={movie.poster_url} target="_blank" rel="noopener noreferrer">
-              Ver poster em tamanho original
-            </a>
-          </div>
-        )}
-
-        {/* Basic Info */}
-        <div style={{ marginBottom: '15px' }}>
-          <h3>Informações Básicas:</h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <tbody>
-              <tr>
-                <td style={{ padding: '8px', fontWeight: 'bold', borderBottom: '1px solid #eee' }}>
-                  ID:
-                </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                  {movie.id}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: '8px', fontWeight: 'bold', borderBottom: '1px solid #eee' }}>
-                  Título:
-                </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                  {movie.title}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: '8px', fontWeight: 'bold', borderBottom: '1px solid #eee' }}>
-                  Ano de Lançamento:
-                </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                  {movie.release_year}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: '8px', fontWeight: 'bold', borderBottom: '1px solid #eee' }}>
-                  Gênero:
-                </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                  {movie.genre}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: '8px', fontWeight: 'bold', borderBottom: '1px solid #eee' }}>
-                  Criado em:
-                </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                  {new Date(movie.created_at).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: '8px', fontWeight: 'bold', borderBottom: '1px solid #eee' }}>
-                  Última atualização:
-                </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                  {new Date(movie.updated_at).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* Synopsis */}
-        <div style={{ marginBottom: '20px' }}>
-          <h3>Sinopse:</h3>
-          <div style={{ 
-            padding: '15px', 
-            backgroundColor: '#f9f9f9', 
-            border: '1px solid #e0e0e0',
-            lineHeight: '1.6'
-          }}>
-            {movie.synopsis}
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div style={{ marginTop: '30px' }}>
-        <h3>Ações:</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <button
-            onClick={handleEdit}
-            disabled={loading}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1
-            }}
-          >
-            {loading ? 'Carregando...' : '✏️ Editar Filme'}
-          </button>
-          
-          <button
-            onClick={handleDelete}
-            disabled={loading}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#dc3545',
-              color: 'white',
-              border: 'none',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1
-            }}
-          >
-            {loading ? 'Carregando...' : '🗑️ Excluir Filme'}
-          </button>
-          
-          <button
-            onClick={handleBackToList}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            📋 Ver Todos os Filmes
-          </button>
-        </div>
-      </div>
-
-      {/* Debug Info (apenas em desenvolvimento) */}
-      {import.meta.env.DEV && (
-        <details style={{ marginTop: '40px', fontSize: '12px' }}>
-          <summary>Debug Info (desenvolvimento)</summary>
-          <pre style={{ backgroundColor: '#f0f0f0', padding: '10px', overflow: 'auto' }}>
-            {JSON.stringify(movie, null, 2)}
-          </pre>
-        </details>
+    <>
+      {isDeleting && (
+        <LoadScreen 
+          isLoading={true} 
+          loadingText="Excluindo filme..." 
+        />
       )}
-    </div>
+      <div ref={containerRef} className={styles.container}>
+        <div 
+          ref={heroImageRef} 
+          className={styles.heroImage}
+          style={{
+            backgroundImage: movie?.poster_url ? `url(${movie.poster_url})` : 'none'
+          }}
+        >
+          <div 
+            ref={heroBackgroundRef}
+            className={styles.heroImageBackground}
+            style={{
+              backgroundImage: movie?.poster_url ? `url(${movie.poster_url})` : 'none'
+            }}
+          />
+        </div>
+        <Box
+          style={{ zIndex: 1001 }}
+          mt={{ base: "200px", sm: "300px" }}
+          pt={{ base: "md", sm: "30px" }}
+          pb={{ base: "md", sm: "80px" }}
+          pl={{ base: "0", sm: "300px" }}
+          pr={{ base: "0", sm: "300px" }}
+        >
+          <Grid>
+            <Grid.Col span={{base: 12, sm: 4}} p={{base: "22px", sm: "0"}} style={{ zIndex: 1001 }}>
+              {movie.poster_url && (
+                <Card p={0}>
+                  <BackgroundImage
+                  className={styles.poster}
+                 
+                    h={500}
+                    w="100%"
+                    src={movie.poster_url}
+                  ></BackgroundImage>
+                </Card>
+              )}
+            </Grid.Col>
+            <Grid.Col span={{base: 12, sm: 8}} style={{ zIndex: 1001 }} p={{base: "22px", sm: "md"}}>
+              <Box>
+                <Title mb={20} c={"dark"} order={2}>
+                  {movie.title}
+                </Title>
+                <Flex gap={10} wrap="wrap" align="center">
+                  <Button
+                    leftSection={<PenIcon size={16} />}
+                    onClick={handleEdit}
+                    disabled={loading}
+                    color="orange"
+                  >
+                    {loading ? "Carregando..." : `Editar Filme`}
+                  </Button>
+                  <ActionIcon
+                    size="lg"
+                    onClick={handleDelete}
+                    disabled={loading}
+                    color="orange"
+                    variant="outline"
+                  >
+                    <TrashIcon size={16} />
+                  </ActionIcon>
+                  <ActionIcon
+                    size="lg"
+                    onClick={handleBackToList}
+                    disabled={loading}
+                    color="orange"
+                    variant="outline"
+                  >
+                    <ArrowLeftIcon size={16} />
+                  </ActionIcon>
+                </Flex>
+                <Divider my="md" />
+                <Text size="lg" c={'dark'} fw={400} mb={20}>
+                  {movie.synopsis}
+                </Text>
+                <Divider my="md" c={"gray.5"} />
+                <Flex wrap={"wrap"} gap={10}>
+                  <Badge color="orange">{movie.genre}</Badge>
+                  <Badge variant="outline" color="orange">
+                    Lançamento: {movie.release_year}
+                  </Badge>
+                </Flex>
+              </Box>
+            </Grid.Col>
+          </Grid>
+        </Box>
+      </div>
+ 
+    </>
   );
 };
 
