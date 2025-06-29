@@ -11,9 +11,8 @@ import {
   Avatar,
   Menu,
   ActionIcon,
-
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import {
   FilmStripIcon,
   PlusIcon,
@@ -22,13 +21,21 @@ import {
   HouseIcon,
   GearIcon,
   CaretRightIcon,
+  HeartIcon,
+
 } from "@phosphor-icons/react";
+import styles from "./style.module.css";
+import HexagonMenuItem from "./components/hexagonalItems/HexagonalMenu";
+
+
+
 
 const MainLayout: React.FC = () => {
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [opened, { toggle }] = useDisclosure();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const handleLogout = async () => {
     await logoutUser();
@@ -37,24 +44,34 @@ const MainLayout: React.FC = () => {
 
   const navigationItems = [
     {
-      icon: <HouseIcon size={20} />,
-      label: "Dashboard",
+      icon: <HouseIcon size={28} weight="fill" />,
+      label: "Home",
       href: "/dashboard",
       active: location.pathname === "/dashboard",
     },
     {
-      icon: <FilmStripIcon size={20} />,
-      label: "Meus Filmes",
+      icon: <FilmStripIcon size={28} weight="fill" />,
+      label: "Filmes",
       href: "/movies",
       active: location.pathname === "/movies",
     },
     {
-      icon: <PlusIcon size={20} />,
-      label: "Adicionar Filme",
+      icon: <PlusIcon size={28} weight="fill" />,
+      label: "Adicionar",
       href: "/movies/create",
-      active: location.pathname === "/movies/create" || location.pathname.includes("/movies/") && location.pathname.includes("/edit"),
+      active: location.pathname === "/movies/create" || (location.pathname.includes("/movies/") && location.pathname.includes("/edit")),
     },
+    {
+      icon: <HeartIcon size={28} weight="fill" />,
+      label: "Favoritos",
+      href: "/favorites",
+      active: location.pathname === "/favorites",
+    },
+
+
   ];
+
+  const desktopNavigationItems = navigationItems;
 
   return (
     <AppShell
@@ -78,8 +95,8 @@ const MainLayout: React.FC = () => {
             />
             <Text 
               size="xl" 
-              fw={700} 
-              c="blue"
+              fw={800} 
+              c="orange"
               style={{ cursor: "pointer" }}
               onClick={() => navigate("/dashboard")}
             >
@@ -124,27 +141,50 @@ const MainLayout: React.FC = () => {
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        <Stack gap="xs">
-          {navigationItems.map((item) => (
-            <NavLink
-            color="orange"
-              key={item.href}
-              href={item.href}
-              label={item.label}
-              leftSection={item.icon}
-              rightSection={<CaretRightIcon size={16} />}
-              active={item.active}
-              variant="filled"
-              onClick={(event) => {
-                event.preventDefault();
-                navigate(item.href);
-                if (opened) {
-                  toggle();
-                }
-              }}
-            />
-          ))}
-        </Stack>
+        {isMobile ? (
+          <div className={styles.mobileMenuGrid}>
+            {navigationItems.map((item) => (
+              <HexagonMenuItem
+                key={item.href}
+                icon={item.icon}
+                label={item.label}
+                active={item.active}
+                onClick={() => {
+                  navigate(item.href);
+                  if (opened) {
+                    toggle();
+                  }
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <Stack gap="xs">
+            {desktopNavigationItems.map((item) => (
+              <NavLink
+                style={{
+                  backgroundColor: item.active ? 'var(  --primary-500)' : 'var(--neutral-50)',
+                  color: item.active ? 'var(--neutral-50)' : 'var(--neutral-700)',
+                }}
+                color="orange"
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                leftSection={item.icon}
+                rightSection={<CaretRightIcon size={16} />}
+                active={item.active}
+                variant="filled"
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate(item.href);
+                  if (opened) {
+                    toggle();
+                  }
+                }}
+              />
+            ))}
+          </Stack>
+        )}
       </AppShell.Navbar>
 
       <AppShell.Main style={{ flex: "1", overflow: "auto", width: "100%" }} bg={'var(--neutral-50)'}>

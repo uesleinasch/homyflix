@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../core/hooks/useAuth";
 import {
   Group,
@@ -17,7 +17,6 @@ import MantineContainer from "../../shared/components/ui/mantineContainer/Mantin
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const dashboardCards = [
     {
@@ -103,31 +102,13 @@ const DashboardPage: React.FC = () => {
             </Card>
           ))}
         </SimpleGrid>
-
         <Card withBorder padding="lg" radius="md">
-          <Group justify="space-between" mb="md">
-            <Text fw={500} size="lg">
-              Ações Rápidas
-            </Text>
-          </Group>
-
-          <Group>
-            <Button
-              leftSection={<PlusIcon size={16} />}
-              onClick={() => navigate("/movies/create")}
-              variant="filled"
-            >
-              Novo Filme
-            </Button>
-            <Button
-              leftSection={<FilmStripIcon size={16} />}
-              onClick={() => navigate("/movies")}
-              variant="outline"
-            >
-              Ver Filmes
-            </Button>
-          </Group>
+        <Title order={1} size="h2">
+              Ultimos filmes adicionados
+            </Title>
         </Card>
+
+
       </Stack>
     </MantineContainer>
   );

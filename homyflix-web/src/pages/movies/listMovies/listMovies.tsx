@@ -106,14 +106,14 @@ const ListMovies: React.FC = () => {
     return (
       <LoadScreen 
         isLoading={true} 
-        loadingText="Carregando lista de filmes..." 
+        loadingText="Carregando meus de filmes..." 
       />
     );
   }
 
   return (
     <MantineContainer>
-      <Header title="Lista de Filmes">
+      <Header title="Meus Filmes">
         <Flex gap="xs" wrap="wrap" display={{ base: "none", sm: "flex" }}>
         <ActionIcon size="lg" onClick={handleCreateMovie} variant="gradient" gradient={{ from: 'var(--primary-600)', to: 'var(--primary-500)', deg: 90 }}>
             <PlusIcon size={16} />
@@ -218,7 +218,7 @@ const ListMovies: React.FC = () => {
         {isLoading && movies.length > 0 && (
           <LoadScreen 
             isLoading={true} 
-            loadingText="Atualizando lista de filmes..." 
+            loadingText="Atualizando meus filmes..." 
           />
         )}
       </Box>

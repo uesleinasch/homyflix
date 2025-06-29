@@ -1,0 +1,196 @@
+.mobileMenuGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+  margin-top: -30px;
+}
+
+.hexagonWrapper {
+  width: 100px;
+  height: 110px;
+  margin: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+.hexagon {
+  width: 100px;
+  height: 57.74px;
+  background: var(--mantine-color-orange-6);
+  position: relative;
+  margin: 28.87px 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hexagon:before,
+.hexagon:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.hexagon:before {
+  bottom: 100%;
+  border-bottom: 28.87px solid var(--mantine-color-orange-6);
+}
+
+.hexagon:after {
+  top: 100%;
+  border-top: 28.87px solid var(--mantine-color-orange-6);
+}
+
+/* Hexágono ativo */
+.hexagonActive {
+  background: var(--mantine-color-orange-8);
+}
+
+.hexagonActive:before {
+  border-bottom-color: var(--mantine-color-orange-8);
+}
+
+.hexagonActive:after {
+  border-top-color: var(--mantine-color-orange-8);
+}
+
+/* Hover effects */
+.hexagonWrapper:hover .hexagon {
+  background: var(--mantine-color-orange-7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.hexagonWrapper:hover .hexagon:before {
+  border-bottom-color: var(--mantine-color-orange-7);
+}
+
+.hexagonWrapper:hover .hexagon:after {
+  border-top-color: var(--mantine-color-orange-7);
+}
+
+/* Conteúdo do hexágono */
+.hexagonContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.hexagonIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hexagonLabel {
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 70px;
+  color: white;
+}
+
+/* Layout honeycomb para mobile */
+@media (max-width: 768px) {
+  .mobileMenuGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    gap: 20px;
+    justify-content: center;
+    padding: 20px 10px;
+    margin-left: -40px;
+    row-gap: 40px;
+  }
+  
+  /* Offset para criar o padrão de colmeia */
+  .hexagonWrapper:nth-child(4),
+  .hexagonWrapper:nth-child(5),
+  .hexagonWrapper:nth-child(6) {
+    position: relative;
+    top: -55px;
+    margin-bottom: -55px;
+  }
+  
+  .hexagonWrapper:nth-child(4) {
+    grid-column: 1 / span 1;
+    margin-left: 50px;
+  }
+  
+  .hexagonWrapper:nth-child(5) {
+    grid-column: 2 / span 1;
+    margin-left: 50px;
+  }
+  
+  .hexagonWrapper:nth-child(6) {
+    grid-column: 3 / span 1;
+    margin-left: 50px;
+  }
+}
+
+/* Para telas menores */
+@media (max-width: 400px) {
+  .hexagonWrapper {
+    width: 80px;
+    height: 88px;
+  }
+  
+  .hexagon {
+    width: 80px;
+    height: 46.19px;
+    margin: 23.09px 0;
+  }
+  
+  .hexagon:before,
+  .hexagon:after {
+    border-left-width: 40px;
+    border-right-width: 40px;
+  }
+  
+  .hexagon:before {
+    border-bottom-width: 23.09px;
+  }
+  
+  .hexagon:after {
+    border-top-width: 23.09px;
+  }
+  
+  .mobileMenuGrid {
+    grid-template-columns: repeat(3, 80px);
+  }
+  
+  .hexagonWrapper:nth-child(4),
+  .hexagonWrapper:nth-child(5),
+  .hexagonWrapper:nth-child(6) {
+    top: -44px;
+    margin-bottom: -44px;
+  }
+  
+  .hexagonWrapper:nth-child(4) {
+    margin-left: 40px;
+  }
+  
+  .hexagonWrapper:nth-child(5) {
+    margin-left: 40px;
+  }
+  
+  .hexagonWrapper:nth-child(6) {
+    margin-left: 40px;
+  }
+  
+  .hexagonLabel {
+    font-size: 10px;
+    max-width: 60px;
+  }
+} 
