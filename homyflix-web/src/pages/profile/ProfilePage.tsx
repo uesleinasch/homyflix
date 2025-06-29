@@ -14,7 +14,7 @@ const ProfilePage: React.FC = () => {
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
             <Group>
-              <Avatar size="xl" radius="xl" name={user?.name} color="blue">
+              <Avatar size="xl" radius="xl" name={user?.name} color="orange">
                 {user?.name?.charAt(0).toUpperCase()}
               </Avatar>
               <div>

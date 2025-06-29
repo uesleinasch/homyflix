@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import  { memo, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -89,7 +89,7 @@ const MovieFilters = memo<MovieFiltersProps>(({ onFilter }) => {
   }, []);
 
   return (
-    <Box mb={{base: "0px", sm: "xl"}}>
+    <Box mb={{ base: "0px", sm: "xl" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <ActionIcon
           bdrs={"50%"}
@@ -174,7 +174,7 @@ const MovieFilters = memo<MovieFiltersProps>(({ onFilter }) => {
 
           <Group>
             <Flex gap="sm" justify="start">
-              <Button type="submit" variant="filled" color="blue">
+              <Button type="submit" variant="filled" color="orange">
                 Filtrar
               </Button>
               <Button

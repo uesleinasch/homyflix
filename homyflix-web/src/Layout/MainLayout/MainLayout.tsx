@@ -90,7 +90,7 @@ const MainLayout: React.FC = () => {
           <Menu shadow="md" width={200}>
             <Menu.Target>
               <ActionIcon variant="subtle" size="lg">
-                <Avatar size="sm" radius="xl" name={user?.name} color="blue">
+                <Avatar size="sm" radius="xl" name={user?.name} color="orange">
                   {user?.name?.charAt(0).toUpperCase()}
                 </Avatar>
               </ActionIcon>

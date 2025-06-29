@@ -5,9 +5,9 @@ import type { Movie } from "../../../shared/types/movie";
 import MantineContainer from "../../../shared/components/ui/mantineContainer/MantineContainer";
 import Header from "../../../shared/components/ui/header/Header";
 import LoadScreen from "../../../shared/components/ui/loaderScreen";
-import { Alert, Box, Button, Flex, Grid, Stack, Text } from "@mantine/core";
+import { ActionIcon, Alert, Box, Button, Flex, Grid, Stack, Text } from "@mantine/core";
 import { MovieItem, MovieFilters, type FilterFormData } from "./Components";
-import { ArrowsCounterClockwiseIcon, InfoIcon } from "@phosphor-icons/react";
+import { ArrowsCounterClockwiseIcon, InfoIcon, PlusIcon } from "@phosphor-icons/react";
 
 // Componente principal
 const ListMovies: React.FC = () => {
@@ -23,26 +23,22 @@ const ListMovies: React.FC = () => {
 
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
 
-  // Atualizar filmes filtrados quando a lista de filmes mudar
   useEffect(() => {
     setFilteredMovies(movies);
   }, [movies]);
 
-  // Limpar erro quando componente desmontar
   useEffect(() => {
     return () => {
       if (error) {
         clearMovieError();
       }
     };
-  }, []); // Removendo dependências desnecessárias
+  }, []); 
 
-  // Função de filtro
   const handleFilter = useCallback(
     (filters: FilterFormData) => {
       let filtered = [...movies];
 
-      // Filtro por busca de título
       if (filters.search && filters.search.trim()) {
         const searchTerm = filters.search.toLowerCase().trim();
         filtered = filtered.filter(
@@ -52,18 +48,15 @@ const ListMovies: React.FC = () => {
         );
       }
 
-      // Filtro por gênero
       if (filters.genre && filters.genre.trim()) {
         filtered = filtered.filter((movie) => movie.genre === filters.genre);
       }
 
-      // Filtro por ano (de)
       if (filters.yearFrom && filters.yearFrom.trim()) {
         const yearFrom = parseInt(filters.yearFrom);
         filtered = filtered.filter((movie) => movie.release_year >= yearFrom);
       }
 
-      // Filtro por ano (até)
       if (filters.yearTo && filters.yearTo.trim()) {
         const yearTo = parseInt(filters.yearTo);
         filtered = filtered.filter((movie) => movie.release_year <= yearTo);
@@ -74,7 +67,6 @@ const ListMovies: React.FC = () => {
     [movies]
   );
 
-  // Handlers de navegação
   const handleViewMovie = useCallback(
     (id: number) => {
       navigate(`/movies/${id}`);
@@ -93,7 +85,6 @@ const ListMovies: React.FC = () => {
     navigate("/movies/create");
   }, [navigate]);
 
-  // Handler de exclusão
   const handleDeleteMovie = useCallback(
     async (id: number) => {
       const result = await deleteExistingMovie(id);
@@ -104,7 +95,6 @@ const ListMovies: React.FC = () => {
     [deleteExistingMovie]
   );
 
-  // Recarregar dados
   const handleRefresh = useCallback(async () => {
     const result = await refreshMovies();
     if (!result.success && result.error) {
@@ -112,7 +102,6 @@ const ListMovies: React.FC = () => {
     }
   }, [refreshMovies]);
 
-  // Loading state - Primeira carga
   if (isLoading && movies.length === 0) {
     return (
       <LoadScreen 
@@ -126,20 +115,18 @@ const ListMovies: React.FC = () => {
     <MantineContainer>
       <Header title="Lista de Filmes">
         <Flex gap="xs" wrap="wrap" display={{ base: "none", sm: "flex" }}>
-          <Button
-            variant="outline"
-            color="gray"
-            onClick={handleRefresh}
-            disabled={isLoading}
-          >
+        <ActionIcon size="lg" onClick={handleCreateMovie} variant="gradient" gradient={{ from: 'var(--primary-600)', to: 'var(--primary-500)', deg: 90 }}>
+            <PlusIcon size={16} />
+          </ActionIcon>
+          <ActionIcon size="lg"  variant="outline" color="orange" onClick={handleRefresh} disabled={isLoading}>
             <ArrowsCounterClockwiseIcon size={16} />
-            Atualizar
-          </Button>
-          <Button onClick={handleCreateMovie}>Novo Filme</Button>
+          </ActionIcon>
+          
+
         </Flex>
       </Header>
 
-      <Box mb={{ base: "0px", sm: "lg" }}>
+      <Box mb={{ base: "0px", sm: "lg" }} pl={{base: "0px", sm: "md"}} pr={{base: "0px", sm: "md"}}>
         <MovieFilters onFilter={handleFilter} />
 
         {/* Error state */}
@@ -172,7 +159,6 @@ const ListMovies: React.FC = () => {
         {/* Movies list */}
         {filteredMovies.length === 0 ? (
           <Stack>
-            <div style={{ textAlign: "center", padding: "40px" }}>
               <Alert
                 icon={<InfoIcon size={16} />}
                 color="orange"
@@ -201,7 +187,7 @@ const ListMovies: React.FC = () => {
                 Cadastrar Filme
               </Button>
               )}
-            </div>
+         
           </Stack>
         ) : (
           <div>
