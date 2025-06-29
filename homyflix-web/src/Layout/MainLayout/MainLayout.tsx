@@ -11,7 +11,7 @@ import {
   Avatar,
   Menu,
   ActionIcon,
-  Divider,
+
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -125,12 +125,6 @@ const MainLayout: React.FC = () => {
 
       <AppShell.Navbar p="md">
         <Stack gap="xs">
-          <Group mb="md">
-            <Text size="sm" fw={500} c="dimmed">
-              NAVEGAÇÃO
-            </Text>
-          </Group>
-
           {navigationItems.map((item) => (
             <NavLink
               key={item.href}
@@ -143,35 +137,12 @@ const MainLayout: React.FC = () => {
               onClick={(event) => {
                 event.preventDefault();
                 navigate(item.href);
-                // Fechar navbar no mobile após navegação
                 if (opened) {
                   toggle();
                 }
               }}
             />
           ))}
-
-          <Divider my="md" />
-
-          <Group>
-            <Text size="sm" fw={500} c="dimmed">
-              USUÁRIO
-            </Text>
-          </Group>
-
-          <Group>
-            <Avatar size="sm" radius="xl" name={user?.name} color="blue">
-              {user?.name?.charAt(0).toUpperCase()}
-            </Avatar>
-            <div>
-              <Text size="sm" fw={500}>
-                {user?.name}
-              </Text>
-              <Text size="xs" c="dimmed">
-                {user?.email}
-              </Text>
-            </div>
-          </Group>
         </Stack>
       </AppShell.Navbar>
 

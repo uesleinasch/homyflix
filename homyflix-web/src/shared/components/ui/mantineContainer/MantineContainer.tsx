@@ -12,7 +12,7 @@ interface CustomContainerProps extends Omit<ContainerProps, 'children'> {
 
 const MantineContainer = ({ 
   children, 
-  maxHeight = 'calc(100vh - 120px)',
+  maxHeight = 'calc(100vh - 100px)',
   scrollbarSize = 8,
   scrollType = 'scroll',
   enableAutosize = true,
@@ -37,6 +37,7 @@ const MantineContainer = ({
     <Container
       className={styles.container}
       fluid
+      p="0px"
       miw="100%"
       style={{ 
         minHeight: '100%', 
