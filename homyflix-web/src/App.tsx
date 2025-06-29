@@ -12,6 +12,8 @@ import PublicRoute from './shared/components/auth/PublicRoute';
 import ListMovies from './pages/movies/listMovies/listMovies';
 import CreateMovie from './pages/movies/createMovie/CreateMovie';
 import MovieDetail from './pages/movies/MovieDetail/MovieDetail';
+import ProfilePage from './pages/profile/ProfilePage';
+import SettingsPage from './pages/settings/SettingsPage';
 import './App.css'
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
           <Route path="/movies/create" element={<CreateMovie />} />
           <Route path="/movies/:id" element={<MovieDetail />} />
           <Route path="/movies/:id/edit" element={<CreateMovie />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

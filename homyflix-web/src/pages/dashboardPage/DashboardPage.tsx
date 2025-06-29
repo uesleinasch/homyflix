@@ -1,50 +1,146 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { 
+
+  Group, 
+  Text, 
+  Button, 
+  Stack, 
+
+  ActionIcon,
+  Badge,
+  Card,
+  SimpleGrid,
+  Title,
+
+} from '@mantine/core';
+import { 
+  FilmStripIcon, 
+  PlusIcon, 
+
+  CaretRightIcon
+} from '@phosphor-icons/react';
+import MantineContainer from '../../shared/components/ui/mantineContainer/MantineContainer';
 
 const DashboardPage: React.FC = () => {
-  const { user, logoutUser } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await logoutUser();
-  };
+
+
+
+  const dashboardCards = [
+    {
+      title: 'Meus Filmes',
+      description: 'Visualizar e gerenciar todos os filmes cadastrados',
+      icon: <FilmStripIcon size={24} />,
+      href: '/movies',
+      color: 'blue'
+    },
+    {
+      title: 'Adicionar Filme',
+      description: 'Cadastrar um novo filme na sua biblioteca',
+      icon: <PlusIcon size={24} />,
+      href: '/movies/create',
+      color: 'green'
+    }
+  ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        >
-          Sair
-        </button>
-      </div>
-
-      {user && (
-        <div className="mb-8">
-          <p className="text-lg">Bem-vindo, {user.name}!</p>
+    <MantineContainer   miw={'100%'}>
+    <Stack gap="lg">
+      <Group justify="space-between" align="center">
+        <div>
+          <Title order={1} size="h2">
+            Dashboard
+          </Title>
+          <Text c="dimmed" size="sm">
+            Bem-vindo de volta, {user?.name}!
+          </Text>
         </div>
-      )}
+        <Badge variant="light" color="green" size="lg">
+          Online
+        </Badge>
+      </Group>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link
-          to="/movies"
-          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
-        >
-          <h2 className="text-xl font-semibold mb-2">Meus Filmes</h2>
-          <p className="text-gray-600">Visualizar todos os filmes cadastrados</p>
-        </Link>
+      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+        {dashboardCards.map((card) => (
+          <Card
+            key={card.href}
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            withBorder
+            component={Link}
+            to={card.href}
+            style={{ 
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.12)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '';
+            }}
+          >
+            <Group justify="space-between" mb="xs">
+              <Text fw={500} size="lg">
+                {card.title}
+              </Text>
+              <ActionIcon variant="light" color={card.color} size="lg">
+                {card.icon}
+              </ActionIcon>
+            </Group>
 
-        <Link
-          to="/movies/create"
-          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
-        >
-          <h2 className="text-xl font-semibold mb-2">Adicionar Filme</h2>
-          <p className="text-gray-600">Cadastrar um novo filme na biblioteca</p>
-        </Link>
-      </div>
-    </div>
+            <Text size="sm" c="dimmed">
+              {card.description}
+            </Text>
+
+                             <Button
+               variant="light"
+               color={card.color}
+               fullWidth
+               mt="md"
+               radius="md"
+               rightSection={<CaretRightIcon size={16} />}
+             >
+               Acessar
+             </Button>
+          </Card>
+        ))}
+      </SimpleGrid>
+
+      <Card withBorder padding="lg" radius="md">
+        <Group justify="space-between" mb="md">
+          <Text fw={500} size="lg">
+            Ações Rápidas
+          </Text>
+        </Group>
+        
+                     <Group>
+           <Button
+             leftSection={<PlusIcon size={16} />}
+             onClick={() => navigate('/movies/create')}
+             variant="filled"
+           >
+             Novo Filme
+           </Button>
+           <Button
+             leftSection={<FilmStripIcon size={16} />}
+             onClick={() => navigate('/movies')}
+             variant="outline"
+           >
+             Ver Filmes
+           </Button>
+         </Group>
+      </Card>
+    </Stack>
+    </MantineContainer>
   );
 };
 
