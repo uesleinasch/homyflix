@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: homyflix-postgres-test
+    environment:
+      POSTGRES_DB: homyflix
+      POSTGRES_USER: homyflix
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"  # Porta diferente para não conflitar
+    volumes:
+      - ./postgres/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql
+    networks:
+      - homyflix-test-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homyflix -d homyflix"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  homyflix-api-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: homyflix-api-test
+    environment:
+      - APP_ENV=testing
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres-test
+      - DB_PORT=5432
+      - DB_DATABASE=homyflix_test
+      - DB_USERNAME=homyflix
+      - DB_PASSWORD=password
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - homyflix-test-network
+    command: >
+      sh -c "
+        echo 'Aguardando PostgreSQL...' &&
+        sleep 10 &&
+        ./docker/scripts/setup-test-db.sh &&
+        echo 'Ambiente de teste configurado!' &&
+        tail -f /dev/null
+      "
+
+networks:
+  homyflix-test-network:
+    driver: bridge 
