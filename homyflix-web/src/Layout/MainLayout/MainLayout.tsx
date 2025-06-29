@@ -127,6 +127,7 @@ const MainLayout: React.FC = () => {
         <Stack gap="xs">
           {navigationItems.map((item) => (
             <NavLink
+            color="orange"
               key={item.href}
               href={item.href}
               label={item.label}

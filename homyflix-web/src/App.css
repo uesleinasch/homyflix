@@ -170,48 +170,6 @@
   --dark-border-secondary: var(--neutral-600);
 }
 
-/* ===== CLASSES UTILITÁRIAS DE CORES ===== */
-
-/* Cores de Texto */
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-tertiary { color: var(--text-tertiary); }
-.text-inverse { color: var(--text-inverse); }
-.text-brand { color: var(--primary-500); }
-.text-success { color: var(--success-500); }
-.text-warning { color: var(--warning-500); }
-.text-error { color: var(--error-500); }
-.text-info { color: var(--info-500); }
-
-/* Cores de Background */
-.bg-primary { background-color: var(--bg-primary); }
-.bg-secondary { background-color: var(--bg-secondary); }
-.bg-brand { background-color: var(--primary-500); }
-.bg-brand-light { background-color: var(--primary-100); }
-.bg-success { background-color: var(--success-500); }
-.bg-warning { background-color: var(--warning-500); }
-.bg-error { background-color: var(--error-500); }
-.bg-info { background-color: var(--info-500); }
-
-/* Bordas */
-.border-primary { border-color: var(--border-primary); }
-.border-secondary { border-color: var(--border-secondary); }
-.border-brand { border-color: var(--primary-500); }
-.border-success { border-color: var(--success-500); }
-.border-warning { border-color: var(--warning-500); }
-.border-error { border-color: var(--error-500); }
-
-/* Gradientes */
-.gradient-primary { background: var(--gradient-primary); }
-.gradient-secondary { background: var(--gradient-secondary); }
-.gradient-hero { background: var(--gradient-hero); }
-
-/* Sombras */
-.shadow-sm { box-shadow: var(--shadow-sm); }
-.shadow-md { box-shadow: var(--shadow-md); }
-.shadow-lg { box-shadow: var(--shadow-lg); }
-.shadow-xl { box-shadow: var(--shadow-xl); }
-.shadow-primary { box-shadow: var(--shadow-primary); }
 
 /* ===== MEDIA QUERIES PARA DARK MODE ===== */
 @media (prefers-color-scheme: dark) {
@@ -260,6 +218,7 @@
 
 html {
   font-family: 'Inter', sans-serif;
+  outline: none;
 }
 
 #root {
@@ -272,4 +231,18 @@ html {
 body {
   overflow: hidden;
   
+}
+button {
+  outline: none;
+}
+button:focus{
+  outline: none !important;
+}
+
+a:hover {
+  color: inherit !important;
+}
+
+button:hover {
+  border: none !important;
 }

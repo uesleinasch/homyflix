@@ -1,7 +1,7 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
-import { MantineProvider } from '@mantine/core';
+import { createTheme, MantineProvider, type MantineColorsTuple } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/LoginPage';
@@ -16,11 +16,29 @@ import MovieDetail from './pages/movies/MovieDetail/MovieDetail';
 import ProfilePage from './pages/profile/ProfilePage';
 import SettingsPage from './pages/settings/SettingsPage';
 import './App.css'
+const myColor: MantineColorsTuple = [
+  '#fff4e1',
+  '#ffe8cc',
+  '#fed09b',
+  '#fdb766',
+  '#fca13a',
+  '#fc931d',
+  '#fc8a08',
+  '#e17800',
+  '#c86a00',
+  '#af5a00'
+];
+
+const theme = createTheme({
+  colors: {
+    myColor,
+  }
+});
 
 function App() {
 
   return (
-    <MantineProvider >
+    <MantineProvider theme={theme}>
       <Notifications />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
