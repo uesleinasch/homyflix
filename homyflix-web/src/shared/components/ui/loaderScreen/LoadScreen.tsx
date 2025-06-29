@@ -10,7 +10,7 @@ import { Loader } from '@mantine/core';
 import styles from './LoadScreen.module.css';
 import type { LoadScreenProps } from './loadscreen';
 
-const LoadScreen: React.FC = memo<LoadScreenProps>(({ 
+const LoadScreen: React.FC<LoadScreenProps> = memo(({ 
   isLoading = true, 
   loadingText = "Carregando..." 
 }) => {

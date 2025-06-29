@@ -4,6 +4,7 @@ import { useMovieOperations } from "../../../core/hooks/useMovieOperations";
 import type { Movie } from "../../../shared/types/movie";
 import MantineContainer from "../../../shared/components/ui/mantineContainer/MantineContainer";
 import Header from "../../../shared/components/ui/header/Header";
+import LoadScreen from "../../../shared/components/ui/loaderScreen";
 import { Alert, Box, Button, Flex, Grid, Stack, Text } from "@mantine/core";
 import { MovieItem, MovieFilters, type FilterFormData } from "./Components";
 import { ArrowsCounterClockwiseIcon, InfoIcon } from "@phosphor-icons/react";
@@ -111,13 +112,13 @@ const ListMovies: React.FC = () => {
     }
   }, [refreshMovies]);
 
-  // Loading state
+  // Loading state - Primeira carga
   if (isLoading && movies.length === 0) {
     return (
-      <div style={{ padding: "20px" }}>
-        <h1>Lista de Filmes</h1>
-        <p>Carregando filmes...</p>
-      </div>
+      <LoadScreen 
+        isLoading={true} 
+        loadingText="Carregando lista de filmes..." 
+      />
     );
   }
 
@@ -227,31 +228,12 @@ const ListMovies: React.FC = () => {
           </div>
         )}
 
-        {/* Loading overlay */}
+        {/* Loading overlay para refresh */}
         {isLoading && movies.length > 0 && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0,0,0,0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: "20px",
-                borderRadius: "4px",
-              }}
-            >
-              Atualizando filmes...
-            </div>
-          </div>
+          <LoadScreen 
+            isLoading={true} 
+            loadingText="Atualizando lista de filmes..." 
+          />
         )}
       </Box>
     </MantineContainer>
