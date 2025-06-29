@@ -100,7 +100,7 @@ class GetMovieByIdUseCaseTest extends TestCase
 
         // Act & Assert
         $this->expectException(MovieNotFoundException::class);
-        $this->expectExceptionMessage('Não encontrado carai');
+        $this->expectExceptionMessage('Filme não encontrado ou você não tem permissão para visualizá-lo.');
         $this->expectExceptionCode(404);
 
         $this->getMovieByIdUseCase->execute($movieId, $userId);
