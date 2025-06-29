@@ -146,7 +146,7 @@ const MainLayout: React.FC = () => {
         </Stack>
       </AppShell.Navbar>
 
-      <AppShell.Main style={{ flex: "1", overflow: "auto", width: "100%" }}>
+      <AppShell.Main style={{ flex: "1", overflow: "auto", width: "100%" }} bg={'var(--neutral-50)'}>
         <Outlet />
       </AppShell.Main>
     </AppShell>

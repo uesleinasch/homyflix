@@ -89,7 +89,7 @@ export const useMovieOperations = () => {
     });
   }, [dispatch, withAuthErrorHandling]);
 
-  // Criar novo filme
+  // Cadastrar novo filme
   const createNewMovie = useCallback(async (movieData: MovieCreateData) => {
     return withAuthErrorHandling(async () => {
       const result = await dispatch(createMovie(movieData)).unwrap();

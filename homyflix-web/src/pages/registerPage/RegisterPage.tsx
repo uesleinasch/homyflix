@@ -162,7 +162,7 @@ const RegisterPage: React.FC = () => {
                     fullWidth
                     className={styles.registerButton}
                   >
-                    Criar Conta
+                    Cadastrar Conta
                   </Button>
 
                   <Button

@@ -139,7 +139,7 @@ const LoginPage: React.FC = () => {
                     to="/register"
                     className={styles.registerButton}
                   >
-                    Criar uma conta
+                    Cadastrar uma conta
                   </Button>
                 </Stack>
               </Stack>

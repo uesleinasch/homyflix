@@ -131,7 +131,7 @@ class UserProfileTest extends TestCase
     /** @test */
     public function it_validates_email_uniqueness_when_updating(): void
     {
-        // Arrange - Criar outro usuário com e-mail que queremos usar
+        // Arrange - Cadastrar outro usuário com e-mail que queremos usar
         User::factory()->create(['email' => 'jatemuso@email.com']);
         
         $updateData = [
