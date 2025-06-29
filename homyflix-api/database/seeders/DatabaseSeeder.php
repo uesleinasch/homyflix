@@ -13,6 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Se estivermos no ambiente de teste, executa apenas o TestUserSeeder
+        if (app()->environment('testing')) {
+            $this->call([
+                TestUserSeeder::class,
+            ]);
+            return;
+        }
+
+        // Para outros ambientes, executa os seeders normais
         $this->call([
             UserSeeder::class,
             MovieSeeder::class,
