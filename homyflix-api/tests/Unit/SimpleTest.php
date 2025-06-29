@@ -3,9 +3,14 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
+use App\Models\Movie;
 
 class SimpleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Teste básico para validar o ambiente PHPUnit
      *
@@ -179,5 +184,48 @@ class SimpleTest extends TestCase
         $this->assertIsBool($boolean);
         $this->assertIsArray($array);
         $this->assertIsObject($object);
+    }
+
+    /**
+     * Teste simples para verificar se é possível cadastrar um filme
+     *
+     * test_
+     */
+    public function test_can_create_movie(): void
+    {
+        // Arrange - Criar usuário primeiro
+        $user = User::factory()->create([
+            'id' => 1,
+            'name' => 'Test User',
+            'email' => 'testuser@example.com'
+        ]);
+
+        // Preparar dados do filme
+        $movieData = [
+            'title' => 'Teste Movie',
+            'release_year' => 2023,
+            'genre' => 'Action',
+            'synopsis' => 'Este é um filme de teste para validar o cadastro.',
+            'poster_url' => 'https://example.com/poster.jpg',
+            'user_id' => $user->id,
+        ];
+
+        // Act - Criar o filme
+        $movie = Movie::create($movieData);
+
+        // Assert - Verificar se o filme foi criado corretamente
+        $this->assertInstanceOf(Movie::class, $movie);
+        $this->assertEquals('Teste Movie', $movie->title);
+        $this->assertEquals(2023, $movie->release_year);
+        $this->assertEquals('Action', $movie->genre);
+        $this->assertEquals('Este é um filme de teste para validar o cadastro.', $movie->synopsis);
+        $this->assertEquals('https://example.com/poster.jpg', $movie->poster_url);
+        $this->assertEquals($user->id, $movie->user_id);
+        $this->assertNotNull($movie->id);
+        $this->assertNotNull($movie->created_at);
+        $this->assertNotNull($movie->updated_at);
+        
+        // Verificar se o filme está associado ao usuário correto
+        $this->assertTrue($movie->user->is($user));
     }
 } 

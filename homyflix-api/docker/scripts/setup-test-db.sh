@@ -44,9 +44,18 @@ echo " Banco de dados configurado!"
 echo " Executando migrations..."
 php artisan migrate:fresh --database=pgsql --force --env=testing
 
+echo "👤 Criando usuário padrão de teste..."
+# Executa o seeder para criar o usuário padrão
+php artisan db:seed --class=TestUserSeeder --database=pgsql --force --env=testing
+
 echo " Banco de dados de teste configurado com sucesso!"
 echo " Detalhes:"
 echo "   - Host: $DB_HOST"
 echo "   - Porta: $DB_PORT"
 echo "   - Banco: $DB_DATABASE"
-echo "   - Usuário: $DB_USERNAME" 
+echo "   - Usuário: $DB_USERNAME"
+echo ""
+echo "👤 Usuário de teste padrão criado:"
+echo "   - Nome: John Smith"
+echo "   - Email: test@jacto.com"
+echo "   - Senha: 123456789" 

@@ -13,6 +13,9 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO homyflix;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO homyflix;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO homyflix;
 
+-- Aguarda um momento para garantir que as migrações foram executadas
+-- Este comando será executado após as migrações do Laravel
+\echo 'Banco de dados de teste homyflix_test criado com sucesso!'
 
 \c homyflix;
 \echo 'Banco de dados de teste homyflix_test criado com sucesso!' 

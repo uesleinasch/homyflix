@@ -13,21 +13,18 @@ class MovieSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buscar usuários existentes ou criar alguns se não existirem
         $users = User::take(3)->get();
         
         if ($users->isEmpty()) {
             $users = User::factory()->count(3)->create();
         }
 
-        // Cadastrar filmes para cada usuário
         foreach ($users as $user) {
             Movie::factory()->count(5)->create([
                 'user_id' => $user->id
             ]);
         }
 
-        // Cadastrar alguns filmes específicos para demonstração
         if ($users->count() > 0) {
             $firstUser = $users->first();
             
