@@ -1,6 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../core/hooks/useAuth";
+import { useMovieOperations } from "../../core/hooks/useMovieOperations";
 import {
   Group,
   Text,
@@ -11,12 +12,28 @@ import {
   Card,
   SimpleGrid,
   Title,
+  Skeleton,
 } from "@mantine/core";
 import { FilmStripIcon, PlusIcon, CaretRightIcon } from "@phosphor-icons/react";
 import MantineContainer from "../../shared/components/ui/mantineContainer/MantineContainer";
+import DashboardMovieCard from "./components/dashboardMovieCard/DashboardMovieCard";
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const { movies, loading } = useMovieOperations();
+  const navigate = useNavigate();
+
+  const recentMovies = movies
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    )
+    .slice(0, 6);
+
+  const handleMovieClick = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+  };
 
   const dashboardCards = [
     {
@@ -102,13 +119,60 @@ const DashboardPage: React.FC = () => {
             </Card>
           ))}
         </SimpleGrid>
+
+        {/* Seção dos últimos filmes adicionados */}
         <Card withBorder padding="lg" radius="md">
-        <Title order={1} size="h2">
-              Ultimos filmes adicionados
-            </Title>
+          <Group justify="space-between" mb="md">
+            <Text fw={500} size="lg">
+              Últimos adicionados
+            </Text>
+            {movies.length > 0 && (
+              <Button
+                variant="subtle"
+                color="orange"
+                size="sm"
+                component={Link}
+                to="/movies"
+                rightSection={<CaretRightIcon size={14} />}
+              >
+                Ver todos
+              </Button>
+            )}
+          </Group>
+
+          {loading ? (
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 6 }} spacing="md">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} height={200} radius="md" />
+              ))}
+            </SimpleGrid>
+          ) : recentMovies.length > 0 ? (
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 6 }} spacing="md">
+              {recentMovies.map((movie) => (
+                <DashboardMovieCard
+                  key={movie.id}
+                  movie={movie}
+                  onClick={() => handleMovieClick(movie.id)}
+                />
+              ))}
+            </SimpleGrid>
+          ) : (
+            <Stack align="center" py="xl">
+              <Text c="dimmed" ta="center">
+                Nenhum filme cadastrado ainda.
+              </Text>
+              <Button
+                variant="light"
+                color="orange"
+                component={Link}
+                to="/movies/create"
+                leftSection={<PlusIcon size={16} />}
+              >
+                Cadastrar primeiro filme
+              </Button>
+            </Stack>
+          )}
         </Card>
-
-
       </Stack>
     </MantineContainer>
   );
