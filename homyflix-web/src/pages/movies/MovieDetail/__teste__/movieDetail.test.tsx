@@ -6,7 +6,6 @@ import { MemoryRouter } from "react-router-dom";
 import { configureStore } from "@reduxjs/toolkit";
 import MovieDetail from "../MovieDetail";
 
-// Mock do import.meta.env
 Object.defineProperty(globalThis, 'import', {
   value: {
     meta: {
@@ -21,7 +20,6 @@ Object.defineProperty(globalThis, 'import', {
   configurable: true
 });
 
-// Mock da API axios
 jest.mock("../../../../core/auth/api", () => ({
   default: {
     defaults: { baseURL: 'http://localhost:8000/api' },
@@ -37,7 +35,6 @@ jest.mock("../../../../core/auth/api", () => ({
   }
 }));
 
-// Mock do tokenManager
 jest.mock("../../../../core/auth/tokenManager", () => ({
   tokenManager: {
     getToken: jest.fn(() => 'fake-token'),
@@ -49,7 +46,6 @@ jest.mock("../../../../core/auth/tokenManager", () => ({
   }
 }));
 
-// Mock dos serviços
 jest.mock("../../../../core/services/movieService", () => ({
   movieService: {
     getAllMovies: jest.fn(() => Promise.resolve([])),
@@ -69,14 +65,12 @@ jest.mock("../../../../shared/services/authApplicationService", () => ({
   }
 }));
 
-// Mock dos ícones do Phosphor
 jest.mock("@phosphor-icons/react", () => ({
   ArrowLeftIcon: () => <button data-testid="arrow-left-icon">←</button>,
   PenIcon: () => <button data-testid="pen-icon">✏</button>,
   TrashIcon: () => <button data-testid="trash-icon">🗑</button>,
 }));
 
-// Mock do hook useMovieOperations
 const mockLoadMovieById = jest.fn();
 const mockDeleteExistingMovie = jest.fn();
 
@@ -96,7 +90,6 @@ jest.mock("../../../../core/hooks/useMovieOperations", () => ({
   useMovieOperations: () => mockUseMovieOperations,
 }));
 
-// Mock do react-router-dom
 const mockNavigate = jest.fn();
 const mockUseParams = jest.fn();
 
@@ -106,14 +99,12 @@ jest.mock("react-router-dom", () => ({
   useParams: () => mockUseParams(),
 }));
 
-// Mock do componente LoadScreen
 jest.mock("../../../../shared/components/ui/loaderScreen", () => {
   return function MockLoadScreen({ isLoading, loadingText }: { isLoading: boolean; loadingText: string }) {
     return isLoading ? <div data-testid="mock-load-screen">{loadingText}</div> : null;
   };
 });
 
-// Mock do arquivo CSS
 jest.mock("../style.module.css", () => ({
   container: "mock-container",
   heroImage: "mock-hero-image",
@@ -121,14 +112,12 @@ jest.mock("../style.module.css", () => ({
   poster: "mock-poster"
 }));
 
-// Mock das funções de animação do browser
 global.requestAnimationFrame = jest.fn((cb) => {
   setTimeout(cb, 0);
   return 1;
 });
 global.cancelAnimationFrame = jest.fn();
 
-// Mock do window.confirm e window.alert
 global.confirm = jest.fn();
 global.alert = jest.fn();
 

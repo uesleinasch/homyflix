@@ -239,7 +239,6 @@ const createMockAuthReducer = (initialState = { user: null, token: null, isAuthe
 };
 
 describe("ListMovies", () => {
-  const mockWindowOpen = jest.fn();
   const renderWithProviders = () => {
     const store = configureStore({
       reducer: {
@@ -330,7 +329,6 @@ describe("ListMovies", () => {
   });
 
 
-  //Simulate a user clicke on the register button
   it("should delete movie when delete button is clicked", async () => {
     const mockMovies = [
       { id: 1, title: "Test Movie", genre: "Action", release_year: 2023, synopsis: "Test synopsis" }

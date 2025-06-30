@@ -8,38 +8,6 @@ const SettingsPage: React.FC = () => {
     <Container size="md">
       <Stack gap="lg">
         <Title order={1}>Configurações</Title>
-        
-        <Paper shadow="sm" p="xl" radius="md">
-          <Stack gap="lg">
-            <Title order={3}>Notificações</Title>
-            
-            <Group justify="space-between">
-              <Group>
-                <BellIcon size={20} />
-                <div>
-                  <Text fw={500}>Notificações por Email</Text>
-                  <Text size="sm" c="dimmed">
-                    Receba atualizações sobre seus filmes por email
-                  </Text>
-                </div>
-              </Group>
-              <Switch defaultChecked />
-            </Group>
-
-            <Group justify="space-between">
-              <Group>
-                <BellIcon size={20} />
-                <div>
-                  <Text fw={500}>Notificações Push</Text>
-                  <Text size="sm" c="dimmed">
-                    Receba notificações no navegador
-                  </Text>
-                </div>
-              </Group>
-              <Switch />
-            </Group>
-          </Stack>
-        </Paper>
 
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
@@ -86,27 +54,6 @@ const SettingsPage: React.FC = () => {
                 </div>
               </Group>
               <Switch />
-            </Group>
-          </Stack>
-        </Paper>
-
-        <Paper shadow="sm" p="xl" radius="md">
-          <Stack gap="lg">
-            <Title order={3}>Idioma e Região</Title>
-            
-            <Group justify="space-between">
-              <Group>
-                <GlobeIcon size={20} />
-                <div>
-                  <Text fw={500}>Idioma</Text>
-                  <Text size="sm" c="dimmed">
-                    Português (Brasil)
-                  </Text>
-                </div>
-              </Group>
-              <Button variant="light" size="sm">
-                Alterar
-              </Button>
             </Group>
           </Stack>
         </Paper>
