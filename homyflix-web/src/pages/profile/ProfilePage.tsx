@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Container, Paper, Title, Stack, Group, Avatar, Text, Button } from '@mantine/core';
 import { useAuth } from '../../core/hooks/useAuth';
 import {  PencilIcon } from '@phosphor-icons/react';
