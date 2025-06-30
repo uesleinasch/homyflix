@@ -16,6 +16,7 @@ import MovieDetail from './pages/movies/MovieDetail/MovieDetail';
 import ProfilePage from './pages/profile/ProfilePage';
 import SettingsPage from './pages/settings/SettingsPage';
 import FavoritesPage from './pages/favorites/FavoritesPage';
+import { useTheme } from './shared/hooks/useTheme';
 import './App.css'
 const myColor: MantineColorsTuple = [
   '#fff4e1',
@@ -33,13 +34,34 @@ const myColor: MantineColorsTuple = [
 const theme = createTheme({
   colors: {
     myColor,
-  }
+    dark: [
+      '#d5d7e0',
+      '#acaebf',
+      '#8c8fa3',
+      '#666980',
+      '#4d4f66',
+      '#34354a',
+      '#2b2c3d',
+      '#1d1e30',
+      '#0c0d21',
+      '#01010a',
+    ],
+  },
+  primaryColor: 'myColor',
+  components: {
+    Button: {
+      defaultProps: {
+        variant: 'filled',
+      },
+    },
+  },
 });
 
 function App() {
+  const { resolvedColorScheme } = useTheme();
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} forceColorScheme={resolvedColorScheme}>
       <Notifications />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

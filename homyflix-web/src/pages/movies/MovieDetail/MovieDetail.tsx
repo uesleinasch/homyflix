@@ -17,12 +17,14 @@ import {
 } from "@mantine/core";
 import { ArrowLeftIcon, PenIcon, TrashIcon } from "@phosphor-icons/react";
 import LoadScreen from "../../../shared/components/ui/loaderScreen";
+import { useTheme } from "../../../shared/hooks/useTheme";
 import styles from "./style.module.css";
 
 const MovieDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { loadMovieById, deleteExistingMovie, loading } = useMovieOperations();
+  const { isDark } = useTheme();
 
   const [movie, setMovie] = useState<Movie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -179,28 +181,44 @@ const MovieDetail: React.FC = () => {
 
   if (error) {
     return (
-      <div>
-        <h1>Erro ao carregar filme</h1>
-        <p style={{ color: "red" }}>{error}</p>
-        <div style={{ marginTop: "20px" }}>
-          <button onClick={handleBackToList} style={{ marginRight: "10px" }}>
+      <Box 
+        p="xl" 
+        style={{ 
+          backgroundColor: isDark ? 'var(--mantine-color-dark-7)' : 'white',
+          color: isDark ? 'white' : 'black',
+          minHeight: '100vh'
+        }}
+      >
+        <Title order={1} mb="md">Erro ao carregar filme</Title>
+        <Text c="red" mb="xl">{error}</Text>
+        <Flex gap="md">
+          <Button onClick={handleBackToList} variant="outline" color="orange">
             ← Voltar para lista
-          </button>
-          <button onClick={() => id && loadMovieData(parseInt(id))}>
+          </Button>
+          <Button onClick={() => id && loadMovieData(parseInt(id))} color="orange">
             Tentar novamente
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Flex>
+      </Box>
     );
   }
 
   if (!movie) {
     return (
-      <div>
-        <h1>Filme não encontrado</h1>
-        <p>O filme solicitado não foi encontrado.</p>
-        <button onClick={handleBackToList}>← Voltar para lista</button>
-      </div>
+      <Box 
+        p="xl" 
+        style={{ 
+          backgroundColor: isDark ? 'var(--mantine-color-dark-7)' : 'white',
+          color: isDark ? 'white' : 'black',
+          minHeight: '100vh'
+        }}
+      >
+        <Title order={1} mb="md">Filme não encontrado</Title>
+        <Text mb="xl">O filme solicitado não foi encontrado.</Text>
+        <Button onClick={handleBackToList} color="orange">
+          ← Voltar para lista
+        </Button>
+      </Box>
     );
   }
 
@@ -212,7 +230,11 @@ const MovieDetail: React.FC = () => {
           loadingText="Excluindo filme..." 
         />
       )}
-      <div ref={containerRef} className={styles.container}>
+      <div 
+        ref={containerRef} 
+        className={styles.container}
+        data-theme={isDark ? 'dark' : 'light'}
+      >
         <div 
           ref={heroImageRef} 
           className={styles.heroImage}
@@ -252,7 +274,7 @@ const MovieDetail: React.FC = () => {
             </Grid.Col>
             <Grid.Col span={{base: 12, sm: 8}} style={{ zIndex: 1001 }} p={{base: "22px", sm: "md"}}>
               <Box>
-                <Title mb={20} c={"dark"} order={2}>
+                <Title mb={20} c={isDark ? "white" : "dark"} order={2}>
                   {movie.title}
                 </Title>
                 <Flex gap={10} wrap="wrap" align="center">
@@ -284,7 +306,7 @@ const MovieDetail: React.FC = () => {
                   </ActionIcon>
                 </Flex>
                 <Divider my="md" />
-                <Text size="lg" c={'dark'} fw={400} mb={20}>
+                <Text size="lg" c={isDark ? "gray.2" : "dark"} fw={400} mb={20}>
                   {movie.synopsis}
                 </Text>
                 <Divider my="md" c={"gray.5"} />

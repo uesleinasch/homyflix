@@ -130,11 +130,16 @@ describe("MovieDetail", () => {
     return (state = initialState) => state;
   };
 
+  const createMockThemeReducer = (initialState = { colorScheme: 'dark', isInitialized: true }) => {
+    return (state = initialState) => state;
+  };
+
   const renderWithProviders = (routeParams = { id: "1" }) => {
     const store = configureStore({
       reducer: {
         movies: createMockMovieReducer(),
         auth: createMockAuthReducer(),
+        theme: createMockThemeReducer(),
       },
       middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
