@@ -15,7 +15,6 @@ import CreateMovie from './pages/movies/createMovie/CreateMovie';
 import MovieDetail from './pages/movies/MovieDetail/MovieDetail';
 import ProfilePage from './pages/profile/ProfilePage';
 import SettingsPage from './pages/settings/SettingsPage';
-import FavoritesPage from './pages/favorites/FavoritesPage';
 import { useTheme } from './shared/hooks/useTheme';
 import './App.css'
 const myColor: MantineColorsTuple = [
@@ -77,7 +76,6 @@ function App() {
           <Route path="/movies/create" element={<CreateMovie />} />
           <Route path="/movies/:id" element={<MovieDetail />} />
           <Route path="/movies/:id/edit" element={<CreateMovie />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>

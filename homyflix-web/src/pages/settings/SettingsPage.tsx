@@ -1,23 +1,39 @@
-import React from 'react';
-import { Container, Paper, Title, Stack, Group, Text, Switch, Button, Divider, Select } from '@mantine/core';
-import { BellIcon, ShieldIcon, PaletteIcon, GlobeIcon, SunIcon, MoonIcon } from '@phosphor-icons/react';
-import { useTheme } from '../../shared/hooks/useTheme';
-import type { ColorScheme } from '../../store/slices/themeSlice';
-import MantineContainer from '../../shared/components/ui/mantineContainer/MantineContainer';
+import React, { useState } from "react";
+import {
+  Paper,
+  Title,
+  Stack,
+  Group,
+  Text,
+  Switch,
+  Button,
+  Divider,
+  Collapse,
+} from "@mantine/core";
+import {
+  ShieldIcon,
+  PaletteIcon,
+  SunIcon,
+  MoonIcon,
+} from "@phosphor-icons/react";
+import { useTheme } from "../../shared/hooks/useTheme";
+import MantineContainer from "../../shared/components/ui/mantineContainer/MantineContainer";
+import ChangePasswordCard from "../../shared/components/forms/ChangePasswordCard";
 
 const SettingsPage: React.FC = () => {
-  const { 
-    colorScheme, 
-    changeColorScheme, 
-    getColorSchemeOptions, 
-    isDark,
-    toggle 
-  } = useTheme();
+  const { isDark, toggle } = useTheme();
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
-  const handleThemeChange = (value: string | null) => {
-    if (value && ['light', 'dark', 'auto'].includes(value)) {
-      changeColorScheme(value as ColorScheme);
-    }
+  const handleChangePasswordClick = () => {
+    setShowChangePassword(true);
+  };
+
+  const handleChangePasswordCancel = () => {
+    setShowChangePassword(false);
+  };
+
+  const handleChangePasswordSuccess = () => {
+    setShowChangePassword(false);
   };
 
   return (
@@ -28,7 +44,7 @@ const SettingsPage: React.FC = () => {
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
             <Title order={3}>Privacidade e Segurança</Title>
-            
+
             <Group justify="space-between">
               <Group>
                 <ShieldIcon size={20} />
@@ -45,7 +61,12 @@ const SettingsPage: React.FC = () => {
             <Divider />
 
             <Group>
-              <Button variant="light" color="red">
+              <Button 
+                variant="light" 
+                color="red"
+                onClick={handleChangePasswordClick}
+                disabled={showChangePassword}
+              >
                 Alterar Senha
               </Button>
               <Button variant="light" color="orange">
@@ -54,6 +75,14 @@ const SettingsPage: React.FC = () => {
             </Group>
           </Stack>
         </Paper>
+
+        {/* Card de Mudança de Senha - Expansível */}
+        <Collapse in={showChangePassword}>
+          <ChangePasswordCard
+            onCancel={handleChangePasswordCancel}
+            onSuccess={handleChangePasswordSuccess}
+          />
+        </Collapse>
 
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
@@ -71,7 +100,7 @@ const SettingsPage: React.FC = () => {
                   </Text>
                 </div>
               </Group>
-              <Switch 
+              <Switch
                 checked={isDark}
                 onChange={toggle}
                 size="md"
@@ -86,4 +115,4 @@ const SettingsPage: React.FC = () => {
   );
 };
 
-export default SettingsPage; 
+export default SettingsPage;
