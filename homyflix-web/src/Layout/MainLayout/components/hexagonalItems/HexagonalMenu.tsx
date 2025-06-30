@@ -1,3 +1,5 @@
+import React from "react";
+import { useTheme } from "../../../../shared/hooks/useTheme";
 import styles from "../../style.module.css";
 
 const HexagonMenuItem: React.FC<{
@@ -6,8 +8,14 @@ const HexagonMenuItem: React.FC<{
     onClick: () => void;
     active?: boolean;
   }> = ({ icon, label, onClick, active }) => {
+    const { isDark } = useTheme();
+    
     return (
-      <div className={styles.hexagonWrapper} onClick={onClick}>
+      <div 
+        className={styles.hexagonWrapper} 
+        onClick={onClick}
+        data-theme={isDark ? 'dark' : 'light'}
+      >
         <div className={`${styles.hexagon} ${active ? styles.hexagonActive : ''}`}>
           <div className={styles.hexagonContent}>
             <div className={styles.hexagonIcon}>

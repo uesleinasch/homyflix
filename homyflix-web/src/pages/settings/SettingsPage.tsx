@@ -3,6 +3,7 @@ import { Container, Paper, Title, Stack, Group, Text, Switch, Button, Divider, S
 import { BellIcon, ShieldIcon, PaletteIcon, GlobeIcon, SunIcon, MoonIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../shared/hooks/useTheme';
 import type { ColorScheme } from '../../store/slices/themeSlice';
+import MantineContainer from '../../shared/components/ui/mantineContainer/MantineContainer';
 
 const SettingsPage: React.FC = () => {
   const { 
@@ -20,7 +21,7 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <Container size="md">
+    <MantineContainer size="md">
       <Stack gap="lg">
         <Title order={1}>Configurações</Title>
 
@@ -57,27 +58,6 @@ const SettingsPage: React.FC = () => {
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
             <Title order={3}>Aparência</Title>
-            
-            <Group justify="space-between">
-              <Group>
-                <PaletteIcon size={20} />
-                <div>
-                  <Text fw={500}>Tema da Aplicação</Text>
-                  <Text size="sm" c="dimmed">
-                    Escolha entre tema claro, escuro ou automático (sistema)
-                  </Text>
-                </div>
-              </Group>
-              <Select
-                value={colorScheme}
-                onChange={handleThemeChange}
-                data={getColorSchemeOptions()}
-                w={120}
-                comboboxProps={{ 
-                  transitionProps: { transition: 'pop', duration: 200 } 
-                }}
-              />
-            </Group>
 
             <Divider />
 
@@ -102,7 +82,7 @@ const SettingsPage: React.FC = () => {
           </Stack>
         </Paper>
       </Stack>
-    </Container>
+    </MantineContainer>
   );
 };
 
