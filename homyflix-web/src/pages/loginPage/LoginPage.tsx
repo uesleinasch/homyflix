@@ -21,6 +21,7 @@ import {
   type LoginFormData,
 } from "../../core/auth/schemas/authSchemas";
 import { useAuth } from "../../core/hooks/useAuth";
+import type { LoginCredentials } from "../../shared/types/auth";
 import styles from "./style.module.css";
 
 const LoginPage: React.FC = () => {
@@ -43,7 +44,13 @@ const LoginPage: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: LoginFormData) => {
-    const result = await authenticateUser(data);
+    // Garante que os dados estão no formato correto para LoginCredentials
+    const credentials: LoginCredentials = {
+      email: data.email,
+      password: data.password
+    };
+    
+    const result = await authenticateUser(credentials);
 
     if (!result.success) {
       notifications.show({

@@ -7,6 +7,9 @@ module.exports = {
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js|jsx)',
     '<rootDir>/src/**/*.(test|spec).(ts|tsx|js|jsx)'
   ],
+  snapshotSerializers: [
+    'jest-serializer-html'
+  ],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
     '^.+\\.(js|jsx)$': 'babel-jest'

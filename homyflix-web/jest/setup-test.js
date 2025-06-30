@@ -1,6 +1,11 @@
 // Setup para testes com Jest e React Testing Library
 import '@testing-library/jest-dom';
 
+// Polyfill para TextEncoder/TextDecoder (necessário para alguns módulos)
+import { TextEncoder, TextDecoder } from 'util';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 // Mock do IntersectionObserver (necessário para alguns componentes Mantine)
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
@@ -65,6 +70,19 @@ const sessionStorageMock = {
 };
 global.sessionStorage = sessionStorageMock;
 
+// Mock do Image (necessário para testes de preview de imagem)
+global.Image = class {
+  constructor() {
+    setTimeout(() => {
+      if (this.onload) this.onload();
+    });
+  }
+};
+
+// Mock do URL.createObjectURL
+global.URL.createObjectURL = jest.fn();
+global.URL.revokeObjectURL = jest.fn();
+
 // Configuração global para testes
 beforeEach(() => {
   // Limpar todos os mocks antes de cada teste
@@ -73,6 +91,10 @@ beforeEach(() => {
   // Limpar localStorage e sessionStorage
   localStorage.clear();
   sessionStorage.clear();
+  
+  // Resetar mocks de URL
+  URL.createObjectURL.mockReset();
+  URL.revokeObjectURL.mockReset();
 });
 
 // Configuração para suprimir warnings desnecessários em testes
@@ -81,7 +103,8 @@ beforeAll(() => {
   console.error = (...args) => {
     if (
       typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render is deprecated')
+      (args[0].includes('Warning: ReactDOM.render is deprecated') ||
+       args[0].includes('Warning: useLayoutEffect does nothing on the server'))
     ) {
       return;
     }
@@ -93,5 +116,40 @@ afterAll(() => {
   console.error = originalError;
 });
 
+// Mock do import.meta.env (Vite)
+global.importMeta = {
+  env: {
+    PROD: false,
+    DEV: true,
+    MODE: 'test',
+    BASE_URL: '/',
+    VITE_API_URL: 'http://localhost:8000/api'
+  }
+};
+
+// Polyfill para import.meta
+Object.defineProperty(global, 'import.meta', {
+  value: global.importMeta
+});
+
 // Timeout global para testes assíncronos
 jest.setTimeout(10000);
+
+// Extensões personalizadas do Jest
+expect.extend({
+  toHaveBeenCalledWithMatch(received, ...expected) {
+    const pass = received.mock.calls.some(call =>
+      expected.every((arg, index) =>
+        typeof arg === 'object'
+          ? expect.objectContaining(arg).asymmetricMatch(call[index])
+          : arg === call[index]
+      )
+    );
+
+    return {
+      pass,
+      message: () =>
+        `expected ${received.getMockName()} to have been called with arguments matching ${expected.join(', ')}`,
+    };
+  },
+});

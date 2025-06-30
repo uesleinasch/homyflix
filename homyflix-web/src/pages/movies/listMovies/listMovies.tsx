@@ -166,15 +166,7 @@ const ListMovies: React.FC = () => {
                 p={{ base: "sm", sm: "md" }}
               >
                 <Text>Nenhum filme encontrado.</Text>
-                <Button
-                  onClick={handleCreateMovie}
-                  variant="outline"
-                  color="orange"
-                  radius="md"
-                  mt="md"
-                >
-                  Cadastrar Filme
-                </Button>
+
               </Alert>
               {movies.length === 0 && (
               <Button
