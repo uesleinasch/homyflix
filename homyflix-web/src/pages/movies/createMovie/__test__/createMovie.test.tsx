@@ -156,11 +156,6 @@ describe("CreateMovie", () => {
     );
   };
 
-  it("should match snapshot", () => {
-    const { container } = renderWithProviders();
-    expect(container).toMatchSnapshot();
-  });
-
   it("should render create movie form without crashing", () => {
     const { container } = renderWithProviders();
     

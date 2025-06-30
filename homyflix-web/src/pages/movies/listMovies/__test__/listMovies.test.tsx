@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MantineProvider } from "@mantine/core";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
@@ -88,14 +88,14 @@ jest.mock("react-router-dom", () => ({
 }));
 
 jest.mock("@phosphor-icons/react", () => ({
-  ArrowsCounterClockwiseIcon: () => <div data-testid="refresh-icon">↻</div>,
-  InfoIcon: () => <div data-testid="info-icon">ℹ</div>,
-  PlusIcon: () => <div data-testid="plus-icon">+</div>,
-  FunnelIcon: () => <div data-testid="funnel-icon">🔽</div>,
-  MagnifyingGlassIcon: () => <div data-testid="search-icon">🔍</div>,
-  EyeIcon: () => <div data-testid="eye-icon">👁</div>,
-  PenIcon: () => <div data-testid="pen-icon">✏</div>,
-  TrashIcon: () => <div data-testid="trash-icon">🗑</div>,
+  ArrowsCounterClockwiseIcon: () => <button data-testid="refresh-icon">↻</button>,
+  InfoIcon: () => <button data-testid="info-icon">ℹ</button>,
+  PlusIcon: () => <button data-testid="plus-icon">+</button>,
+  FunnelIcon: () => <button data-testid="funnel-icon">🔽</button>,
+  MagnifyingGlassIcon: () => <button data-testid="search-icon">🔍</button>,
+  EyeIcon: () => <button data-testid="eye-icon">👁</button>,
+  PenIcon: () => <button data-testid="pen-icon">✏</button>,
+  TrashIcon: () => <button name="trash-icon" data-testid="trash-icon">🗑</button>,
 }));
 
 jest.mock("../Components", () => ({
@@ -239,6 +239,7 @@ const createMockAuthReducer = (initialState = { user: null, token: null, isAuthe
 };
 
 describe("ListMovies", () => {
+  const mockWindowOpen = jest.fn();
   const renderWithProviders = () => {
     const store = configureStore({
       reducer: {
@@ -251,6 +252,8 @@ describe("ListMovies", () => {
           thunk: false 
         }),
     });
+
+
 
     return render(
       <Provider store={store}>
@@ -322,9 +325,32 @@ describe("ListMovies", () => {
 
   it("should display error state correctly", () => {
     mockUseMovieOperations.error = "Erro ao carregar filmes";
+    renderWithProviders();
+    expect(screen.getByText("Erro ao carregar filmes")).toBeInTheDocument();
+  });
+
+
+  //Simulate a user clicke on the register button
+  it("should delete movie when delete button is clicked", async () => {
+    const mockMovies = [
+      { id: 1, title: "Test Movie", genre: "Action", release_year: 2023, synopsis: "Test synopsis" }
+    ];
     
+    mockUseMovieOperations.movies = mockMovies;
     renderWithProviders();
     
-    expect(screen.getByText("Erro ao carregar filmes")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("movie-item-1")).toBeInTheDocument();
+    });
+    
+    const deleteButton = screen.getByText("Excluir");
+    
+    window.confirm = jest.fn(() => true);
+    
+    fireEvent.click(deleteButton);
+    
+    await waitFor(() => {
+      expect(mockUseMovieOperations.deleteExistingMovie).toHaveBeenCalledWith(1);
+    });
   });
 });
