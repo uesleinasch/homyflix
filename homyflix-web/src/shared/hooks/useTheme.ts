@@ -20,21 +20,17 @@ export const useTheme = () => {
 
 
 
-  // Inicializar tema na primeira renderização
   useEffect(() => {
     if (!isInitialized) {
       dispatch(initializeTheme(undefined));
     }
   }, [dispatch, isInitialized]);
 
-  // Escutar mudanças na preferência do sistema quando auto está selecionado
   useEffect(() => {
     if (colorScheme === 'auto' && typeof window !== 'undefined') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       
       const handleSystemChange = () => {
-        // Força re-renderização quando a preferência do sistema muda
-        // O selector já vai recalcular automaticamente através do estado
         window.dispatchEvent(new CustomEvent('theme-system-change'));
       };
 
