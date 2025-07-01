@@ -27,7 +27,6 @@ abstract class TestCase extends BaseTestCase
      */
     protected function setupTestEnvironment(): void
     {
-        // Garantir que estamos em ambiente de teste
         $this->app['config']->set('app.env', 'testing');
         $this->app['config']->set('database.default', 'pgsql');
         $this->app['config']->set('database.connections.pgsql', [
