@@ -13,12 +13,17 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
-            ['email' => 'root@homyflix.com'],
+        User::updateOrCreate(
+            ['email' => 'admin@jacto.com'],
             [
-                'name' => 'root',
-                'password' => Hash::make('root'),
+                'name' => 'Admin',
+                'email' => 'admin@jacto.com',
+                'password' => '12345678',
+                'email_verified_at' => now(),
             ]
         );
+
+        // Adicionar log para debug
+        $this->command->info('✅ Usuário admin criado/atualizado com sucesso!');
     }
 }

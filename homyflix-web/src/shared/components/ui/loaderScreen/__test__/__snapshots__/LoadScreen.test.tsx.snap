@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoaderScreen Should render correctly with default props 1`] = `
+<div>
+  <style
+    data-mantine-styles="classes"
+  >
+    @media (max-width: 35.99375em) {.mantine-visible-from-xs {display: none !important;}}@media (min-width: 36em) {.mantine-hidden-from-xs {display: none !important;}}@media (max-width: 47.99375em) {.mantine-visible-from-sm {display: none !important;}}@media (min-width: 48em) {.mantine-hidden-from-sm {display: none !important;}}@media (max-width: 61.99375em) {.mantine-visible-from-md {display: none !important;}}@media (min-width: 62em) {.mantine-hidden-from-md {display: none !important;}}@media (max-width: 74.99375em) {.mantine-visible-from-lg {display: none !important;}}@media (min-width: 75em) {.mantine-hidden-from-lg {display: none !important;}}@media (max-width: 87.99375em) {.mantine-visible-from-xl {display: none !important;}}@media (min-width: 88em) {.mantine-hidden-from-xl {display: none !important;}}
+  </style>
+  <div
+    aria-busy="true"
+    aria-label="Carregando aplicação"
+    class="overlay"
+    role="progressbar"
+  >
+    <div
+      class="container"
+    >
+      <span
+        class="m_4e3f22d7 m_5ae2e3c mantine-Loader-root"
+        data-size="xl"
+        style="--loader-size: var(--loader-size-xl); --loader-color: var(--mantine-color-orange-filled);"
+      >
+        <span
+          class="m_870c4af"
+        />
+        <span
+          class="m_870c4af"
+        />
+        <span
+          class="m_870c4af"
+        />
+      </span>
+      <span
+        class="text"
+      >
+        Carregando...
+      </span>
+    </div>
+  </div>
+</div>
+`;

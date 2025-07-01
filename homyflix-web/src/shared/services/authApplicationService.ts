@@ -138,10 +138,6 @@ export class AuthApplicationService {
     
     console.log('Auth Event:', logData);
     
-  // Em produção, enviar para serviço de analytics/logging
-  if (typeof window !== 'undefined' && import.meta.env.PROD) {
-    // analytics.track(event, logData);
-  }
   }
 }
 

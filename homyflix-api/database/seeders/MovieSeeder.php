@@ -29,20 +29,20 @@ class MovieSeeder extends Seeder
             $firstUser = $users->first();
             
             Movie::create([
-                'title' => 'The Matrix',
-                'release_year' => 1999,
+                'title' => 'Homem de Ferro',
+                'release_year' => 2008,
                 'genre' => 'Sci-Fi',
-                'synopsis' => 'A computer programmer is led to fight an underground war against powerful computers who have constructed his entire reality with a system called the Matrix.',
-                'poster_url' => 'https://example.com/matrix.jpg',
+                'synopsis' => 'Iron Man (bra/prt: Homem de Ferro)[2][3] é um filme estadunidense de super-herói de 2008 baseado no personagem homônimo da Marvel Comics. Produzido pelo Marvel Studios e distribuído pela Paramount Pictures,[a] é o primeiro filme do Universo Cinematográfico Marvel. O filme foi dirigido por Jon Favreau, com um roteiro escrito por Mark Fergus & Hawk Ostby e Art Marcum & Matt Holloway.',
+                'poster_url' => 'https://upload.wikimedia.org/wikipedia/pt/thumb/0/00/Iron_Man_poster.jpg/250px-Iron_Man_poster.jpg',
                 'user_id' => $firstUser->id,
             ]);
 
             Movie::create([
-                'title' => 'Inception',
-                'release_year' => 2010,
-                'genre' => 'Thriller',
-                'synopsis' => 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
-                'poster_url' => 'https://example.com/inception.jpg',
+                'title' => 'O Incrível Hulk',
+                'release_year' => 2008,
+                'genre' => 'Ação',
+                'synopsis' => 'The Incredible Hulk (Br/Prt: O Incrível Hulk)[3][4] é um filme estadunidense de super-herói de 2008 baseado no personagem Hulk da Marvel Comics, produzido pela Marvel Studios e distribuído pela Universal Pictures.',
+                'poster_url' => 'https://upload.wikimedia.org/wikipedia/pt/thumb/1/1b/The_Incredible_Hulk.jpg/250px-The_Incredible_Hulk.jpg',
                 'user_id' => $firstUser->id,
             ]);
         }

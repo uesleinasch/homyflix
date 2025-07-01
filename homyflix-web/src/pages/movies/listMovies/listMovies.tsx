@@ -126,7 +126,7 @@ const ListMovies: React.FC = () => {
         </Flex>
       </Header>
 
-      <Box mb={{ base: "0px", sm: "lg" }} pl={{base: "0px", sm: "md"}} pr={{base: "0px", sm: "md"}}>
+      <Box mb={{ base: "0px", sm: "lg" }} pl={{base: "0px", sm: "0px"}} pr={{base: "0px", sm: "0px"}}>
         <MovieFilters onFilter={handleFilter} />
 
         {/* Error state */}
@@ -166,15 +166,7 @@ const ListMovies: React.FC = () => {
                 p={{ base: "sm", sm: "md" }}
               >
                 <Text>Nenhum filme encontrado.</Text>
-                <Button
-                  onClick={handleCreateMovie}
-                  variant="outline"
-                  color="orange"
-                  radius="md"
-                  mt="md"
-                >
-                  Cadastrar Filme
-                </Button>
+
               </Alert>
               {movies.length === 0 && (
               <Button

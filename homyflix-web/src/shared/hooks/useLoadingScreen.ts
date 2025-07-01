@@ -1,25 +1,10 @@
 import { useState, useCallback } from 'react';
 
 interface UseLoadingScreenReturn {
-  /**
-   * Estado atual do loading
-   */
   isLoading: boolean;
-  /**
-   * Função para mostrar o loading screen
-   */
   showLoading: () => void;
-  /**
-   * Função para esconder o loading screen
-   */
   hideLoading: () => void;
-  /**
-   * Função para alternar o estado do loading
-   */
   toggleLoading: () => void;
-  /**
-   * Função para executar uma operação assíncrona com loading automático
-   */
   withLoading: <T>(operation: () => Promise<T>) => Promise<T>;
 }
 
