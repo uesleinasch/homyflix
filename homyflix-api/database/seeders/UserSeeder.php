@@ -18,8 +18,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'admin@jacto.com',
-                'password' => '12345678',
-                'email_verified_at' => now(),
+                'password' => Hash::make('12345678'),
             ]
         );
 

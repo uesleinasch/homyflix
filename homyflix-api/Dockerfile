@@ -17,7 +17,7 @@ WORKDIR /var/www/html
 
 # Copiar os arquivos de dependência e instalar as dependências do Composer
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist
+RUN composer install --no-interaction --no-plugins --prefer-dist
 
 # Copiar o restante dos arquivos da aplicação
 COPY . .
