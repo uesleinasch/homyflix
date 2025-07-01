@@ -31,7 +31,4 @@ yarn-error.log*
 
 
 # IDEs
-.github/
-copilot-instructions.md
 *.code-workspace
-.cursor/
