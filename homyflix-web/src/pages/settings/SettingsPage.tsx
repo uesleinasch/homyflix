@@ -19,6 +19,7 @@ import {
 import { useTheme } from "../../shared/hooks/useTheme";
 import MantineContainer from "../../shared/components/ui/mantineContainer/MantineContainer";
 import ChangePasswordCard from "../../shared/components/forms/ChangePasswordCard";
+import Header from "../../shared/components/ui/header/Header";
 
 const SettingsPage: React.FC = () => {
   const { isDark, toggle } = useTheme();
@@ -37,10 +38,9 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <MantineContainer size="md">
+    <MantineContainer size="lg" >
       <Stack gap="lg">
-        <Title order={1}>Configurações</Title>
-
+        <Header title="Configurações" />
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
             <Title order={3}>Privacidade e Segurança</Title>

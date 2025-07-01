@@ -126,7 +126,7 @@ const ListMovies: React.FC = () => {
         </Flex>
       </Header>
 
-      <Box mb={{ base: "0px", sm: "lg" }} pl={{base: "0px", sm: "md"}} pr={{base: "0px", sm: "md"}}>
+      <Box mb={{ base: "0px", sm: "lg" }} pl={{base: "0px", sm: "0px"}} pr={{base: "0px", sm: "0px"}}>
         <MovieFilters onFilter={handleFilter} />
 
         {/* Error state */}

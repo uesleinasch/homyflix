@@ -21,6 +21,13 @@ Object.defineProperty(globalThis, 'import', {
   configurable: true
 });
 
+// Mock das notificações do Mantine
+jest.mock("@mantine/notifications", () => ({
+  notifications: {
+    show: jest.fn(),
+  },
+}));
+
 // Mock da API de autenticação
 jest.mock("../../../core/auth/api", () => ({
   default: {
@@ -47,6 +54,7 @@ jest.mock("../../../core/auth/tokenManager", () => ({
       email: 'joao@example.com',
       created_at: '2024-01-15T10:30:00Z'
     })),
+    setCurrentUser: jest.fn(),
     isTokenValid: jest.fn(() => true),
     clearToken: jest.fn(),
     setToken: jest.fn(),
@@ -64,6 +72,19 @@ jest.mock("../../../shared/services/authApplicationService", () => ({
   }
 }));
 
+// Mock do userService
+jest.mock("../../../shared/services/userService", () => ({
+  userService: {
+    updatePassword: jest.fn(),
+    updateProfile: jest.fn(() => Promise.resolve({
+      id: 1,
+      name: 'João Silva Atualizado',
+      email: 'joao.atualizado@example.com',
+      created_at: '2024-01-15T10:30:00Z'
+    })),
+  }
+}));
+
 // Mock do React Router
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -74,6 +95,12 @@ jest.mock("react-router-dom", () => ({
 jest.mock("@phosphor-icons/react", () => ({
   PencilIcon: ({ size }: { size?: number }) => (
     <span data-testid="pencil-icon" style={{ fontSize: size }}>✏️</span>
+  ),
+  CheckIcon: ({ size }: { size?: number }) => (
+    <span data-testid="check-icon" style={{ fontSize: size }}>✓</span>
+  ),
+  XIcon: ({ size }: { size?: number }) => (
+    <span data-testid="x-icon" style={{ fontSize: size }}>✕</span>
   ),
 }));
 
@@ -104,11 +131,28 @@ jest.mock("../../../core/hooks/useAuth", () => ({
   useAuth: () => mockUseAuth,
 }));
 
-// Mock dos slices do Redux
+const mockUseUser: any = {
+  user: {
+    id: 1,
+    name: 'João Silva',
+    email: 'joao@example.com',
+    created_at: '2024-01-15T10:30:00Z'
+  },
+  loading: false,
+  error: null,
+  updatePassword: jest.fn(() => Promise.resolve({ success: true })),
+  updateProfile: jest.fn(() => Promise.resolve({ success: true })),
+};
+
+jest.mock("../../../shared/hooks/useUser", () => ({
+  useUser: () => mockUseUser,
+}));
+
 jest.mock("../../../store/slices/authSlice", () => {
   const originalModule = jest.requireActual("../../../store/slices/authSlice");
   return {
     ...originalModule,
+    syncAuthState: jest.fn(() => ({ type: 'auth/syncAuthState' })),
     login: {
       ...originalModule.login,
       pending: { type: 'auth/login/pending' },
@@ -136,12 +180,16 @@ jest.mock("../../../store/slices/authSlice", () => {
   };
 });
 
-// Criação dos reducers mock
 const createMockAuthReducer = (
   initialState = { 
-    user: null, 
-    token: null, 
-    isAuthenticated: false, 
+    user: {
+      id: 1,
+      name: 'João Silva',
+      email: 'joao@example.com',
+      created_at: '2024-01-15T10:30:00Z'
+    }, 
+    token: 'mock-token', 
+    isAuthenticated: true, 
     isLoading: false, 
     error: null 
   }
@@ -151,9 +199,22 @@ const createMockAuthReducer = (
 
 describe("ProfilePage", () => {
   const renderWithProviders = (authState?: any) => {
+    const defaultAuthState = {
+      user: {
+        id: 1,
+        name: 'João Silva',
+        email: 'joao@example.com',
+        created_at: '2024-01-15T10:30:00Z'
+      }, 
+      token: 'mock-token', 
+      isAuthenticated: true, 
+      isLoading: false, 
+      error: null
+    };
+
     const store = configureStore({
       reducer: {
-        auth: createMockAuthReducer(authState),
+        auth: createMockAuthReducer(authState || defaultAuthState),
       },
       middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -176,7 +237,6 @@ describe("ProfilePage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
-    // Reset mock do useAuth para estado padrão
     Object.assign(mockUseAuth, {
       user: {
         id: 1,
@@ -197,6 +257,20 @@ describe("ProfilePage", () => {
       isTokenValid: jest.fn(() => true),
       logout: jest.fn(() => Promise.resolve({ success: true })),
       refreshToken: jest.fn(() => Promise.resolve({ success: true }))
+    });
+
+
+    Object.assign(mockUseUser, {
+      user: {
+        id: 1,
+        name: 'João Silva',
+        email: 'joao@example.com',
+        created_at: '2024-01-15T10:30:00Z'
+      },
+      loading: false,
+      error: null,
+      updatePassword: jest.fn(() => Promise.resolve({ success: true })),
+      updateProfile: jest.fn(() => Promise.resolve({ success: true })),
     });
   });
 
@@ -231,15 +305,9 @@ describe("ProfilePage", () => {
     expect(screen.getByText("Editar Perfil")).toBeInTheDocument();
     expect(screen.getByText("Informações da Conta")).toBeInTheDocument();
     expect(screen.getByText("Membro desde:")).toBeInTheDocument();
-    
-    // Assert - Informações do usuário aparecem múltiplas vezes
     expect(screen.getAllByText("João Silva")).toHaveLength(2);
     expect(screen.getAllByText("joao@example.com")).toHaveLength(2);
-    
-    // Assert - Data formatada corretamente
     expect(screen.getByText("15/01/2024")).toBeInTheDocument();
-    
-    // Assert - Avatar com inicial do nome
     expect(screen.getByText("J")).toBeInTheDocument();
   });
 
@@ -306,17 +374,104 @@ describe("ProfilePage", () => {
     expect(pencilIcon).toBeInTheDocument();
   });
 
-  it("should handle edit profile button click", () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    
+  it("should enter edit mode when edit button is clicked", () => {
     renderWithProviders();
     
     const editButton = screen.getByRole("button", { name: /editar perfil/i });
     fireEvent.click(editButton);
     
-    expect(consoleSpy).toHaveBeenCalledWith('Editar perfil');
+
+    expect(screen.getByRole("button", { name: /salvar/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /cancelar/i })).toBeInTheDocument();
+
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/nome/i)).toBeInTheDocument();
+  });
+
+  it("should populate form fields with current user data when entering edit mode", () => {
+    renderWithProviders();
     
-    consoleSpy.mockRestore();
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    fireEvent.click(editButton);
+
+    const emailInput = screen.getByLabelText(/email/i) as HTMLInputElement;
+    const nameInput = screen.getByLabelText(/nome/i) as HTMLInputElement;
+    
+    expect(emailInput.value).toBe('joao@example.com');
+    expect(nameInput.value).toBe('João Silva');
+  });
+
+  it("should cancel edit mode when cancel button is clicked", () => {
+    renderWithProviders();
+
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    fireEvent.click(editButton);
+
+    const cancelButton = screen.getByRole("button", { name: /cancelar/i });
+    fireEvent.click(cancelButton);
+
+    expect(screen.getByRole("button", { name: /editar perfil/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /salvar/i })).not.toBeInTheDocument();
+  });
+
+  it("should validate required fields before saving", async () => {
+    renderWithProviders();
+    
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    fireEvent.click(editButton);
+    
+    const emailInput = screen.getByLabelText(/email/i);
+    const nameInput = screen.getByLabelText(/nome/i);
+    
+    fireEvent.change(emailInput, { target: { value: '' } });
+    fireEvent.change(nameInput, { target: { value: '' } });
+    
+    const saveButton = screen.getByRole("button", { name: /salvar/i });
+    fireEvent.click(saveButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+      expect(screen.getByText("Email é obrigatório")).toBeInTheDocument();
+    });
+  });
+
+  it("should validate email format", async () => {
+    renderWithProviders();
+    
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    fireEvent.click(editButton);
+    
+    const emailInput = screen.getByLabelText(/email/i);
+    fireEvent.change(emailInput, { target: { value: 'email-invalido' } });
+  
+    const saveButton = screen.getByRole("button", { name: /salvar/i });
+    fireEvent.click(saveButton);
+    await waitFor(() => {
+      expect(screen.getByText("Email deve ter um formato válido")).toBeInTheDocument();
+    });
+  });
+
+  it("should call updateProfile when form is valid and save button is clicked", async () => {
+    renderWithProviders();
+    
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    fireEvent.click(editButton);
+    
+    const emailInput = screen.getByLabelText(/email/i);
+    const nameInput = screen.getByLabelText(/nome/i);
+    
+    fireEvent.change(emailInput, { target: { value: 'novo@email.com' } });
+    fireEvent.change(nameInput, { target: { value: 'Novo Nome' } });
+    
+    const saveButton = screen.getByRole("button", { name: /salvar/i });
+    fireEvent.click(saveButton);
+    
+    await waitFor(() => {
+      expect(mockUseUser.updateProfile).toHaveBeenCalledWith({
+        name: 'Novo Nome',
+        email: 'novo@email.com'
+      });
+    });
   });
 
   it("should display user avatar with correct initial", () => {
@@ -329,14 +484,12 @@ describe("ProfilePage", () => {
   it("should format date correctly in Brazilian format", () => {
     renderWithProviders();
     
-
     expect(screen.getByText("15/01/2024")).toBeInTheDocument();
   });
 
   it("should display all profile sections", () => {
     renderWithProviders();
     
-
     expect(screen.getByText("Meu Perfil")).toBeInTheDocument();
     expect(screen.getByText("Informações da Conta")).toBeInTheDocument();
     
@@ -368,9 +521,54 @@ describe("ProfilePage", () => {
     renderWithProviders(authState);
 
     // Assert
-    expect(screen.getByText("M")).toBeInTheDocument(); // Inicial de "Maria"
+    expect(screen.getByText("M")).toBeInTheDocument(); 
     expect(screen.getAllByText("Maria Santos")).toHaveLength(2);
     expect(screen.getAllByText("maria@example.com")).toHaveLength(2);
     expect(screen.getByText("20/02/2024")).toBeInTheDocument();
+  });
+
+  it("should display loading overlay when loading is true", () => {
+    // Arrange
+    mockUseUser.loading = true;
+    
+    // Act
+    renderWithProviders();
+    
+    // Assert
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    expect(editButton).toBeDisabled();
+  });
+
+  it("should display error message when there is an error", () => {
+    // Arrange
+    mockUseUser.error = 'Erro ao atualizar perfil';
+    
+    // Act
+    renderWithProviders();
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    fireEvent.click(editButton);
+    
+    // Assert
+    expect(screen.getByText("Erro ao atualizar perfil")).toBeInTheDocument();
+  });
+
+  it("should clear field errors when user starts typing", async () => {
+    renderWithProviders();
+    
+    const editButton = screen.getByRole("button", { name: /editar perfil/i });
+    fireEvent.click(editButton);
+    
+    const nameInput = screen.getByLabelText(/nome/i);
+    fireEvent.change(nameInput, { target: { value: '' } });
+    const saveButton = screen.getByRole("button", { name: /salvar/i });
+    fireEvent.click(saveButton);
+    await waitFor(() => {
+      expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+    });
+    
+    fireEvent.change(nameInput, { target: { value: 'N' } });
+    await waitFor(() => {
+      expect(screen.queryByText("Nome é obrigatório")).not.toBeInTheDocument();
+    });
   });
 }); 
