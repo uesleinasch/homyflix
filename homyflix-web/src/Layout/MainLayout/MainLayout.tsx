@@ -24,6 +24,7 @@ import {
   HeartIcon,
 
 } from "@phosphor-icons/react";
+import { useTheme } from "../../shared/hooks/useTheme";
 import styles from "./style.module.css";
 import HexagonMenuItem from "./components/hexagonalItems/HexagonalMenu";
 
@@ -32,6 +33,7 @@ import HexagonMenuItem from "./components/hexagonalItems/HexagonalMenu";
 
 const MainLayout: React.FC = () => {
   const { user, logoutUser } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [opened, { toggle }] = useDisclosure();
@@ -61,12 +63,7 @@ const MainLayout: React.FC = () => {
       href: "/movies/create",
       active: location.pathname === "/movies/create" || (location.pathname.includes("/movies/") && location.pathname.includes("/edit")),
     },
-    {
-      icon: <HeartIcon size={28} weight="fill" />,
-      label: "Favoritos",
-      href: "/favorites",
-      active: location.pathname === "/favorites",
-    },
+
 
 
   ];
@@ -84,7 +81,13 @@ const MainLayout: React.FC = () => {
       padding="md"
       miw={"100%"}
     >
-      <AppShell.Header>
+      <AppShell.Header
+        style={{
+          backgroundColor: isDark ? 'var(--mantine-color-dark-6)' : 'white',
+          borderBottom: isDark ? '1px solid var(--mantine-color-dark-4)' : '1px solid var(--mantine-color-gray-3)',
+          transition: 'all 0.2s ease'
+        }}
+      >
         <Group h="100%" px="md" justify="space-between">
           <Group>
             <Burger
@@ -140,7 +143,13 @@ const MainLayout: React.FC = () => {
         </Group>
       </AppShell.Header>
 
-      <AppShell.Navbar p="md">
+      <AppShell.Navbar 
+        p="md"
+        style={{
+          backgroundColor: isDark ? 'var(--mantine-color-dark-6)' : 'white',
+          transition: 'background-color 0.2s ease'
+        }}
+      >
         {isMobile ? (
           <div className={styles.mobileMenuGrid}>
             {navigationItems.map((item) => (
@@ -163,8 +172,18 @@ const MainLayout: React.FC = () => {
             {desktopNavigationItems.map((item) => (
               <NavLink
                 style={{
-                  backgroundColor: item.active ? 'var(  --primary-500)' : 'var(--neutral-50)',
-                  color: item.active ? 'var(--neutral-50)' : 'var(--neutral-700)',
+                  backgroundColor: item.active 
+                    ? 'var(--mantine-color-orange-6)' 
+                    : isDark 
+                      ? 'var(--neutral-800)' 
+                      : 'var(--neutral-50)',
+                  color: item.active 
+                    ? 'white' 
+                    : isDark 
+                      ? 'var(--neutral-200)' 
+                      : 'var(--neutral-700)',
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease',
                 }}
                 color="orange"
                 key={item.href}
@@ -187,7 +206,15 @@ const MainLayout: React.FC = () => {
         )}
       </AppShell.Navbar>
 
-      <AppShell.Main style={{ flex: "1", overflow: "auto", width: "100%" }} bg={'var(--neutral-50)'}>
+      <AppShell.Main 
+        style={{ 
+          flex: "1", 
+          overflow: "auto", 
+          width: "100%",
+          backgroundColor: isDark ? 'var(--mantine-color-dark-7)' : 'var(--neutral-50)',
+          transition: 'background-color 0.2s ease'
+        }}
+      >
         <Outlet />
       </AppShell.Main>
     </AppShell>

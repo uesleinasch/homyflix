@@ -1,50 +1,50 @@
-import React from 'react';
-import { Container, Paper, Title, Stack, Group, Text, Switch, Button, Divider } from '@mantine/core';
-import { BellIcon, ShieldIcon, PaletteIcon, GlobeIcon } from '@phosphor-icons/react';
+import React, { useState } from "react";
+import {
+  Paper,
+  Title,
+  Stack,
+  Group,
+  Text,
+  Switch,
+  Button,
+  Divider,
+  Collapse,
+} from "@mantine/core";
+import {
+  ShieldIcon,
+  PaletteIcon,
+  SunIcon,
+  MoonIcon,
+} from "@phosphor-icons/react";
+import { useTheme } from "../../shared/hooks/useTheme";
+import MantineContainer from "../../shared/components/ui/mantineContainer/MantineContainer";
+import ChangePasswordCard from "../../shared/components/forms/ChangePasswordCard";
+import Header from "../../shared/components/ui/header/Header";
 
 const SettingsPage: React.FC = () => {
+  const { isDark, toggle } = useTheme();
+  const [showChangePassword, setShowChangePassword] = useState(false);
+
+  const handleChangePasswordClick = () => {
+    setShowChangePassword(true);
+  };
+
+  const handleChangePasswordCancel = () => {
+    setShowChangePassword(false);
+  };
+
+  const handleChangePasswordSuccess = () => {
+    setShowChangePassword(false);
+  };
 
   return (
-    <Container size="md">
+    <MantineContainer size="lg" >
       <Stack gap="lg">
-        <Title order={1}>Configurações</Title>
-        
-        <Paper shadow="sm" p="xl" radius="md">
-          <Stack gap="lg">
-            <Title order={3}>Notificações</Title>
-            
-            <Group justify="space-between">
-              <Group>
-                <BellIcon size={20} />
-                <div>
-                  <Text fw={500}>Notificações por Email</Text>
-                  <Text size="sm" c="dimmed">
-                    Receba atualizações sobre seus filmes por email
-                  </Text>
-                </div>
-              </Group>
-              <Switch defaultChecked />
-            </Group>
-
-            <Group justify="space-between">
-              <Group>
-                <BellIcon size={20} />
-                <div>
-                  <Text fw={500}>Notificações Push</Text>
-                  <Text size="sm" c="dimmed">
-                    Receba notificações no navegador
-                  </Text>
-                </div>
-              </Group>
-              <Switch />
-            </Group>
-          </Stack>
-        </Paper>
-
+        <Header title="Configurações" />
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
             <Title order={3}>Privacidade e Segurança</Title>
-            
+
             <Group justify="space-between">
               <Group>
                 <ShieldIcon size={20} />
@@ -61,7 +61,12 @@ const SettingsPage: React.FC = () => {
             <Divider />
 
             <Group>
-              <Button variant="light" color="red">
+              <Button 
+                variant="light" 
+                color="red"
+                onClick={handleChangePasswordClick}
+                disabled={showChangePassword}
+              >
                 Alterar Senha
               </Button>
               <Button variant="light" color="orange">
@@ -71,48 +76,43 @@ const SettingsPage: React.FC = () => {
           </Stack>
         </Paper>
 
+        {/* Card de Mudança de Senha - Expansível */}
+        <Collapse in={showChangePassword}>
+          <ChangePasswordCard
+            onCancel={handleChangePasswordCancel}
+            onSuccess={handleChangePasswordSuccess}
+          />
+        </Collapse>
+
         <Paper shadow="sm" p="xl" radius="md">
           <Stack gap="lg">
             <Title order={3}>Aparência</Title>
-            
+
+            <Divider />
+
             <Group justify="space-between">
               <Group>
                 <PaletteIcon size={20} />
                 <div>
-                  <Text fw={500}>Tema Escuro</Text>
+                  <Text fw={500}>Alternar Tema Rápido</Text>
                   <Text size="sm" c="dimmed">
-                    Usar tema escuro na aplicação
+                    Alternar entre claro e escuro rapidamente
                   </Text>
                 </div>
               </Group>
-              <Switch />
-            </Group>
-          </Stack>
-        </Paper>
-
-        <Paper shadow="sm" p="xl" radius="md">
-          <Stack gap="lg">
-            <Title order={3}>Idioma e Região</Title>
-            
-            <Group justify="space-between">
-              <Group>
-                <GlobeIcon size={20} />
-                <div>
-                  <Text fw={500}>Idioma</Text>
-                  <Text size="sm" c="dimmed">
-                    Português (Brasil)
-                  </Text>
-                </div>
-              </Group>
-              <Button variant="light" size="sm">
-                Alterar
-              </Button>
+              <Switch
+                checked={isDark}
+                onChange={toggle}
+                size="md"
+                onLabel={<SunIcon size={16} />}
+                offLabel={<MoonIcon size={16} />}
+              />
             </Group>
           </Stack>
         </Paper>
       </Stack>
-    </Container>
+    </MantineContainer>
   );
 };
 
-export default SettingsPage; 
+export default SettingsPage;

@@ -1,16 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import movieReducer from './slices/movieSlice';
-
-// Importe os reducers dos slices aqui quando eles forem criados
-// import userReducer from './slices/userSlice';
+import themeReducer from './slices/themeSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     movies: movieReducer,
-    // Adicione os reducers aqui
-    // user: userReducer,
+    theme: themeReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

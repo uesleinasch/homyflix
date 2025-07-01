@@ -8,11 +8,16 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
+
     public function run(): void
     {
+        if (app()->environment('testing')) {
+            $this->call([
+                TestUserSeeder::class,
+            ]);
+            return;
+        }
+
         $this->call([
             UserSeeder::class,
             MovieSeeder::class,

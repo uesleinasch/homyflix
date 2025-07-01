@@ -1,3 +1,11 @@
+/* CSS Variables for neutral colors */
+:root {
+  --neutral-50: #f9fafb;
+  --neutral-200: #e5e7eb;
+  --neutral-700: #374151;
+  --neutral-800: #1f2937;
+}
+
 .mobileMenuGrid {
   display: flex;
   flex-wrap: wrap;
@@ -24,6 +32,12 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Dark theme hexagon */
+.hexagonWrapper[data-theme="dark"] .hexagon {
+  background: var(--neutral-800);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .hexagon:before,
 .hexagon:after {
   content: "";
@@ -42,6 +56,15 @@
 .hexagon:after {
   top: 100%;
   border-top: 28.87px solid var(--mantine-color-orange-6);
+}
+
+/* Dark theme borders */
+.hexagonWrapper[data-theme="dark"] .hexagon:before {
+  border-bottom-color: var(--neutral-800);
+}
+
+.hexagonWrapper[data-theme="dark"] .hexagon:after {
+  border-top-color: var(--neutral-800);
 }
 
 /* Hexágono ativo */
@@ -70,6 +93,20 @@
 
 .hexagonWrapper:hover .hexagon:after {
   border-top-color: var(--mantine-color-orange-7);
+}
+
+/* Dark theme hover effects */
+.hexagonWrapper[data-theme="dark"]:hover .hexagon {
+  background: var(--neutral-700);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hexagonWrapper[data-theme="dark"]:hover .hexagon:before {
+  border-bottom-color: var(--neutral-700);
+}
+
+.hexagonWrapper[data-theme="dark"]:hover .hexagon:after {
+  border-top-color: var(--neutral-700);
 }
 
 /* Conteúdo do hexágono */
@@ -102,6 +139,11 @@
   color: white;
 }
 
+/* Dark theme label */
+.hexagonWrapper[data-theme="dark"] .hexagonLabel {
+  color: var(--neutral-200);
+}
+
 /* Layout honeycomb para mobile */
 @media (max-width: 768px) {
   .mobileMenuGrid {
@@ -110,7 +152,6 @@
     gap: 20px;
     justify-content: center;
     padding: 20px 10px;
-    margin-left: -40px;
     row-gap: 40px;
   }
   
