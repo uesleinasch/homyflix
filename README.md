@@ -1,4 +1,5 @@
 # Teste técnico JACTO
+Este é um projeto exclusivamente para fins de testes técnico mas sinta-se libre para usar como desejar. Você encontrara uma API simples e um front responsivo e intuitivo  para gerenciamento de filmes.
 
 ## Como rodar o ambiente 
 
@@ -360,3 +361,65 @@ homyflix-api/app/
 
 [VER NO GIT](https://github.com/users/uesleinasch/projects/15)
 https://github.com/users/uesleinasch/projects/15
+
+
+
+## Funcionalidades
+
+### 🎬 **API**
+
+#### **🔐 Autenticação & Usuários**
+- **Login** - Autenticação via email/senha com JWT
+- **Registro** - Criação de nova conta de usuário  
+- **Logout** - Invalidação segura do token JWT
+- **Refresh Token** - Renovação automática de tokens expirados
+- **Perfil do Usuário** - Visualização e edição de dados pessoais
+
+#### **🎥 Gerenciamento de Filmes (CRUD Completo)**
+- **Listar Filmes** - Busca paginada dos filmes do usuário logado
+- **Detalhes do Filme** - Visualização completa de um filme específico
+- **Criar Filme** - Cadastro de novo filme com validações
+- **Editar Filme** - Atualização de dados de filme existente
+- **Excluir Filme** - Remoção permanente de filme
+
+#### **Segurança & Validações**
+- **Middleware JWT** - Proteção de rotas autenticadas
+- **Validação de Dados** - Form Requests com regras específicas
+- **Isolamento por Usuário** - Cada usuário vê apenas seus filmes
+- **Tratamento de Erros** - Respostas consistentes em JSON
+
+### **Frontend**
+
+#### **Autenticação & Onboarding**
+- **Tela de Login** - Interface responsiva com validação de formulário
+- **Tela de Registro** - Cadastro com confirmação de senha
+- **Logout Automático** - Redirecionamento em caso de token expirado
+- **Rotas Protegidas** - Controle de acesso baseado em autenticação
+
+#### **Gerenciamento de Filmes**
+- **Lista de Filmes** - Grid responsivo com todos os filmes do usuário
+- **Filtros Avançados** - Busca por título, gênero, ano de lançamento
+- **Detalhes do Filme** - Página dedicada com efeitos parallax
+- **Criar/Editar Filme** - Formulário inteligente que detecta modo edição
+- **Preview de Poster** - Carregamento e validação de URLs de imagem
+- **Exclusão Confirmada** - Modal de confirmação antes de excluir
+
+#### **Perfil & Configurações**
+- **Página de Perfil** - Visualização e edição de dados pessoais
+- **Alteração de Senha** - Formulário seguro para mudança de senha
+- **Configurações** - Alternância entre tema claro/escuro
+- **Preferências** - Salvamento de configurações no localStorage
+
+#### **UX/UI Avançada**
+- **Tema Duplo** - Suporte completo a modo claro/escuro
+- **Loading States** - Indicadores visuais durante carregamentos
+- **Notificações** - Sistema de feedback para ações do usuário
+- **Design Responsivo** - Interface adaptável para mobile/tablet/desktop
+- **Animações Suaves** - Transições CSS e efeitos visuais
+- **Tratamento de Erros** - Mensagens amigáveis para diferentes cenários
+
+#### **Performance & Estado**
+- **Redux Store** - Gerenciamento global de estado
+- **Cache Inteligente** - Dados persistidos para melhor performance
+- **Lazy Loading** - Carregamento otimizado de componentes
+- **Validação Reativa** - Feedback instantâneo em formulários
