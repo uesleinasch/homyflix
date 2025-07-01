@@ -63,6 +63,9 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "jwt:secret": [
+            "docker exec homyflex-api php artisan jwt:secret --help"
         ]
     },
     "extra": {
